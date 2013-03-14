@@ -27,7 +27,7 @@ nn.W{1} = sae.ae{1}.W{1};
 % Train the FFNN
 opts.numepochs =   1;
 opts.batchsize = 100;
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.16, 'Too big error');
 
@@ -60,6 +60,6 @@ nn.W{2} = sae.ae{2}.W{1};
 % Train the FFNN
 opts.numepochs =   1;
 opts.batchsize = 100;
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');

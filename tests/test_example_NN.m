@@ -15,7 +15,7 @@ rng(0);
 nn = nnsetup([784 100 10]);
 opts.numepochs =  1;   %  Number of full sweeps through data
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
-[nn, L] = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 
@@ -37,7 +37,7 @@ nn.weightPenaltyL2 = 1e-4;  %  L2 weight decay
 opts.numepochs =  1;        %  Number of full sweeps through data
 opts.batchsize = 100;       %  Take a mean gradient step over this many samples
 
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');
@@ -51,21 +51,21 @@ nn.dropoutFraction = 0.5;   %  Dropout fraction
 opts.numepochs =  1;        %  Number of full sweeps through data
 opts.batchsize = 100;       %  Take a mean gradient step over this many samples
 
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');
 
 %% ex4 neural net with sigmoid activation function
 rng(0);
-nn = nnsetup([784 100 10]);
+[nn,L,loss] = nnsetup([784 100 10]);
 
 nn.activation_function = 'sigm';    %  Sigmoid activation function
 nn.learningRate = 1;                %  Sigm require a lower learning rate
 opts.numepochs =  1;                %  Number of full sweeps through data
 opts.batchsize = 100;               %  Take a mean gradient step over this many samples
 
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');
@@ -78,7 +78,7 @@ nn.output              = 'softmax';    %  use softmax output
 opts.batchsize         = 1000;         %  Take a mean gradient step over this many samples
 opts.plot              = 1;            %  enable plotting
 
-nn = nntrain(nn, train_x, train_y, opts);
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');
@@ -92,19 +92,26 @@ ty = train_y(10001:end,:);
 
 rng(0);
 nn.activation_function  = 'sigm';
-nn                      = nnsetup([784 20 10]);     
-nn.output               = 'sigm';                   %  use softmax output
-opts.numepochs          = 10;                           %  Number of full sweeps through data
+nn                      = nnsetup([784 200 10]);     
+nn.output               = 'softmax';                   %  use softmax output
+nn.errfun               = @nnmatthew;     
+nn.learningRate         = 0.1;
+nn.weightPenaltyL2      = 1e-4;
+
+
+%nn.dropoutFraction      = 0.5;
+opts.numepochs          = 30;                           %  Number of full sweeps through data
 opts.batchsize          = 1000;                        %  Take a mean gradient step over this many samples
 
 opts.plot               = 1;                           %  enable plotting
 
 %the default for errfun is nntest, the default for plotfun is updatefigures
-%nn.errfun               = @nntest                      %  This function is applied to train and optionally validation set should be format [er, notUsed] = name(nn, x, y)
-%nn.plotfun              = @matthew
+                 %  This function is applied to train and optionally validation set should be format [er, notUsed] = name(nn, x, y)
+opts.plotfun                = @nnplotmatthew;
 
 [nn,L,loss] = nntrain(nn, tx, ty, opts, vx, vy);                %  nntrain takes validation set as last two arguments (optionally)
 
 
 [er, bad] = nntest(nn, test_x, test_y);
+er
 assert(er < 0.1, 'Too big error');
