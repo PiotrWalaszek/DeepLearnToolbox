@@ -1,4 +1,4 @@
-function [nn, L]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
+function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 %NNTRAIN trains a neural net
 % [nn, L] = nnff(nn, x, y, opts) trains the neural network nn with input x and
 % output y for opts.numepochs epochs, with minibatches of size
@@ -10,17 +10,27 @@ assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
 loss.train.e               = [];
-loss.train.e_frac          = [];
+loss.train.e_errfun        = [];
 loss.val.e                 = [];
-loss.val.e_frac            = [];
-opts.validation = 0;
+loss.val.e_errfun          = [];
+
+
+
 if nargin == 6
     opts.validation = 1;
+else
+    opts.validation = 0;
 end
+
 
 fhandle = [];
 if isfield(opts,'plot') && opts.plot == 1
     fhandle = figure();
+    %check if plotting function is supplied, else use nnupdatefigures
+    if ~isfield(opts,'plotfun')
+        opts.plotfun = @nnupdatefigures;
+    end
+    
 end
 
 m = size(train_x, 1);
@@ -59,15 +69,19 @@ for i = 1 : numepochs
     
     t = toc;
     
-    if ishandle(fhandle)
-        if opts.validation == 1
-            loss = nneval(nn, loss, train_x, train_y, val_x, val_y);
-        else
-            loss = nneval(nn, loss, train_x, train_y);
-        end
-        nnupdatefigures(nn, fhandle, loss, opts, i);
+    
+    %after each epoch update losses
+    if opts.validation == 1
+        loss = nneval(nn, loss, train_x, train_y, val_x, val_y);
+    else
+        loss = nneval(nn, loss, train_x, train_y);
     end
-        
+    
+    % plot if figure is available
+    if ishandle(fhandle)
+        opts.plotfun(nn, fhandle, loss, opts, i);
+    end
+    
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
     
 end

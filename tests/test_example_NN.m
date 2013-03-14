@@ -91,12 +91,20 @@ vy   = train_y(1:10000,:);
 ty = train_y(10001:end,:);
 
 rng(0);
+nn.activation_function  = 'sigm';
 nn                      = nnsetup([784 20 10]);     
-nn.output               = 'softmax';                   %  use softmax output
-opts.numepochs          = 5;                           %  Number of full sweeps through data
+nn.output               = 'sigm';                   %  use softmax output
+opts.numepochs          = 10;                           %  Number of full sweeps through data
 opts.batchsize          = 1000;                        %  Take a mean gradient step over this many samples
+
 opts.plot               = 1;                           %  enable plotting
-nn = nntrain(nn, tx, ty, opts, vx, vy);                %  nntrain takes validation set as last two arguments (optionally)
+
+%the default for errfun is nntest, the default for plotfun is updatefigures
+%nn.errfun               = @nntest                      %  This function is applied to train and optionally validation set should be format [er, notUsed] = name(nn, x, y)
+%nn.plotfun              = @matthew
+
+[nn,L,loss] = nntrain(nn, tx, ty, opts, vx, vy);                %  nntrain takes validation set as last two arguments (optionally)
+
 
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.1, 'Too big error');

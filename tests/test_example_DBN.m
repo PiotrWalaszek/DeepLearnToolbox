@@ -7,12 +7,13 @@ train_y = double(train_y);
 test_y  = double(test_y);
 
 %%  ex1 train a 100 hidden unit RBM and visualize its weights
-rng(0);
+rng('default'),rng(0);
 dbn.sizes = [100];
-opts.numepochs =   1;
+opts.numepochs =   10;
 opts.batchsize = 100;
 opts.momentum  =   0;
-opts.alpha     =   1;
+opts.alpha     =   1;    %learning rate
+opts.cdn       =   10;
 dbn = dbnsetup(dbn, train_x, opts);
 dbn = dbntrain(dbn, train_x, opts);
 figure; visualize(dbn.rbm{1}.W');   %  Visualize the RBM weights
