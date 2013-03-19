@@ -31,12 +31,13 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
         end
         
     else
+        subplot(n_rows,n_cols,1);
         p = plot(x_ax,L.train.e,'b');
         legend(p, {'Training'},'Location','NorthEast');
         xlabel('Number of epochs'); ylabel('Error');title('Error');    
         set(gca, 'Xlim',[0,opts.numepochs + 1])
         
-        for b = 1:nplots
+        for b = 1:nplots-1
             subplot(n_rows,n_cols,b+1);
             p = plot(x_ax, L.train.e_errfun(:,b), 'b');
             ylabel('MCC'); xlabel('Epoch'); 
