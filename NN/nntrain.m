@@ -1,10 +1,13 @@
-function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
+function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y, outputpath)
 %NNTRAIN trains a neural net
 % [nn, L] = nnff(nn, x, y, opts) trains the neural network nn with input x and
 % output y for opts.numepochs epochs, with minibatches of size
 % opts.batchsize. Returns a neural network nn with updated activations,
 % errors, weights and biases, (nn.a, nn.e, nn.W, nn.b) and L, the sum
 % squared error for each training minibatch.
+if nargin < 7
+    outputpath = 'best_nn_weights';
+end
 
 assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
@@ -14,7 +17,7 @@ loss.train.e_errfun        = [];
 loss.val.e                 = [];
 loss.val.e_errfun          = [];
 
-
+corrfoeff_old = -inf;
 
 if nargin == 6
     opts.validation = 1;
@@ -87,10 +90,17 @@ for i = 1 : numepochs
     
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
     
-    %save model after every ten epochs
+    %save model after every ten epochsif it is better than the previous
+    %saved
     if mod(numepochs,10) == 0
-       save('saved_nn_weights','nn');
-       disp('Saved weights to saved_nn_weights.mat');
+       corrfoeff = nnmatthew(nn, val_x, val_y);
+       
+       if corrfoeff(1) > corrfoeff_old
+            epoch_nr = i;
+            save(outputpath,'nn','epoch_nr');
+            disp(['Saved weights to' outputpath]);
+            corrfoeff_old = corrfoeff(1);
+       end
     end
     
 end
