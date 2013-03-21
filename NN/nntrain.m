@@ -92,6 +92,7 @@ for i = 1 : numepochs
        save('saved_nn_weights','nn');
        disp('Saved weights to saved_nn_weights.mat');
     end
+    
 end
 end
 
