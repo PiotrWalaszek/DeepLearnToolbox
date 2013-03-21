@@ -1,4 +1,4 @@
-function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y, outputpath)
+function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 %NNTRAIN trains a neural net
 % [nn, L] = nnff(nn, x, y, opts) trains the neural network nn with input x and
 % output y for opts.numepochs epochs, with minibatches of size
@@ -34,6 +34,12 @@ if isfield(opts,'plot') && opts.plot == 1
         opts.plotfun = @nnupdatefigures;
     end
     
+end
+
+if isfield(opts, 'outputfolder')
+    save_nn = 1;
+else
+    save_nn = 0;
 end
 
 m = size(train_x, 1);
@@ -92,13 +98,13 @@ for i = 1 : numepochs
     
     %save model after every ten epochsif it is better than the previous
     %saved
-    if mod(numepochs,10) == 0
+    if save_nn && mod(i,10) == 0
        corrfoeff = nnmatthew(nn, val_x, val_y);
        
        if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            save(outputpath,'nn','epoch_nr');
-            disp(['Saved weights to' outputpath]);
+            save([opts.outputfolder '.mat'],'nn','opts','epoch_nr');
+            disp(['Saved weights to: ' opts.outputfolder]);
             corrfoeff_old = corrfoeff(1);
        end
     end
