@@ -87,7 +87,7 @@ for i = 1 : numepochs
     
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
     
-        %save model after every ten epochs
+    %save model after every ten epochs
     if mod(numepochs,10) == 0
        save('saved_nn_weights','nn');
        disp('Saved weights to saved_nn_weights.mat');
