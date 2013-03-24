@@ -2,7 +2,7 @@ function nn = nnbp(nn)
 %NNBP performs backpropagation
 % nn = nnbp(nn) returns an neural network structure with updated weights 
     
-    n = nn.n;
+    n = nn.n;           %number of layers                
     sparsityError = 0;
     switch nn.output
         case 'sigm'

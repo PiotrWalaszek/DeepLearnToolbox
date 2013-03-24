@@ -11,6 +11,18 @@ function nn = nnff(nn, x, y)
 
     %feedforward pass
     for i = 2 : n-1
+        %dropout input layers
+        if(i == 2 && nn.dropoutFractionInput > 0 )
+            if(nn.testing)
+                nn.a{i-1} = nn.a{i-1}.*(1 - nn.dropoutFractionInput);
+            else
+                nn.dropOutMaskInput = (rand(size(nn.a{1}))>nn.dropoutFractionInput);
+                nn.a{1} = nn.a{1}.*nn.dropOutMaskInput;
+            end
+        end
+        
+        
+        
         switch nn.activation_function 
             case 'sigm'
                 % Calculate the unit's outputs (including the bias term)
@@ -19,7 +31,7 @@ function nn = nnff(nn, x, y)
                 nn.a{i} = tanh_opt(nn.a{i - 1} * nn.W{i - 1}');
         end
         
-        %dropout
+        %dropout hidden layers
         if(nn.dropoutFraction > 0)
             if(nn.testing)
                 nn.a{i} = nn.a{i}.*(1 - nn.dropoutFraction);
@@ -28,6 +40,7 @@ function nn = nnff(nn, x, y)
                 nn.a{i} = nn.a{i}.*nn.dropOutMask{i};
             end
         end
+              
         
         %calculate running exponential activations for use with sparsity
         if(nn.nonSparsityPenalty>0)

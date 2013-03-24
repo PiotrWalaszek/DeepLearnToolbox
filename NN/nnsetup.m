@@ -4,7 +4,7 @@ function nn = nnsetup(architecture)
 % layers, architecture being a n x 1 vector of layer sizes e.g. [784 100 10]
 
     nn.size   = architecture;
-    nn.n      = numel(nn.size);
+    nn.n      = numel(nn.size);                         %number of layers
     
     nn.activation_function              = 'tanh_opt';   %  Activation functions of hidden layers: 'sigm' (sigmoid) or 'tanh_opt' (optimal tanh).
     nn.learningRate                     = 2;            %  learning rate Note: typically needs to be lower when using 'sigm' activation function and non-normalized inputs.
@@ -14,6 +14,7 @@ function nn = nnsetup(architecture)
     nn.sparsityTarget                   = 0.05;         %  Sparsity target
     nn.inputZeroMaskedFraction          = 0;            %  Used for Denoising AutoEncoders
     nn.dropoutFraction                  = 0;            %  Dropout level (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
+    nn.dropoutFractionInput             = 0;            %  Dropout level on input (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
     nn.testing                          = 0;            %  Internal variable. nntest sets this to one.
     nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
 
