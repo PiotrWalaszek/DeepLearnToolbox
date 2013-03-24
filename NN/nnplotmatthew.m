@@ -16,7 +16,7 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
         subplot(n_rows,n_cols,1);
         p = plot(x_ax, L.train.e, 'b', ...
                  x_ax, L.val.e, 'r');
-        legend(p, {'Training', 'Validation'},'Location','SouthEast');
+        legend(p, {'Training', 'Validation'},'Location','Best');
         xlabel('Number of epochs'); ylabel('Error');title('Error');    
         set(gca, 'Xlim',[0,opts.numepochs + 1])
         %create subplots of correlations
@@ -26,7 +26,7 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
                      x_ax, L.val.e_errfun(:,b),   'm');
             ylabel('MCC'); xlabel('Epoch'); 
             title(sprintf('Matthew correlation: Class %i',b))
-            legend(p, {'Training', 'Validation'},'Location','SouthEast');
+            legend(p, {'Training', 'Validation'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
         end
         
@@ -42,7 +42,7 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
             p = plot(x_ax, L.train.e_errfun(:,b), 'b');
             ylabel('MCC'); xlabel('Epoch'); 
             title(sprintf('Class %i',b))
-            legend(p, {'Training'},'Location','NorthEast');
+            legend(p, {'Training'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
         end
         
