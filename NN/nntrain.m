@@ -37,10 +37,31 @@ if isfield(opts,'plot') && opts.plot == 1
 end
 
 if isfield(opts, 'outputfolder')
-    save_nn = 1;
+    save_nn_flag = 1;
 else
-    save_nn = 0;
+    save_nn_flag = 0;
 end
+
+%variable momentum
+if isfield(opts, 'momentum_variable')
+    if length(opts.momentum_variable) ~= opts.numepochs
+        error('opts.momentum_variable must specify a momentum value for each epoch ie length(opts.momentum_variable) == opts.numepochs')
+    end
+    var_momentum_flag = 1;
+else
+    var_momentum_flag = 0;
+end
+
+%variable learningrate
+if isfield(opts, 'learningRate_variable')
+    if length(opts.learningRate_variable) ~= opts.numepochs
+        error('opts.learningRate_variable must specify a learninrate value for each epoch ie length(opts.learningRate_variable) == opts.numepochs')
+    end
+    var_learningRate_flag = 1;
+else
+    var_learningRate_flag = 0;
+end
+
 
 m = size(train_x, 1);
 
@@ -55,6 +76,14 @@ L = zeros(numepochs*numbatches,1);
 n = 1;
 for i = 1 : numepochs
     tic;
+    %update momentum
+    if var_momentum_flag
+       nn.momentum = opts.momentum_variable(i);
+    end
+    %update learning rate
+    if var_learningRate_flag
+       nn.learningRate = opts.learningRate_variable(i);
+    end    
     
     kk = randperm(m);
     for l = 1 : numbatches
@@ -96,9 +125,9 @@ for i = 1 : numepochs
     
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
     
-    %save model after every ten epochsif it is better than the previous
-    %saved
-    if save_nn && mod(i,10) == 0
+    %save model after every ten epochs if it is better than the previous
+    %saved model
+    if save_nn_flag && mod(i,10) == 0
        corrfoeff = nnmatthew(nn, val_x, val_y);
        
        if corrfoeff(1) > corrfoeff_old

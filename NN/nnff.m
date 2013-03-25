@@ -8,20 +8,23 @@ function nn = nnff(nn, x, y)
     
     x = [ones(m,1) x];
     nn.a{1} = x;
+    
+    %dropout input layers, Note that no changes need to be done in the nnbp
+    %since it is the top layer - Please Check to Confirm this...
+    if(nn.dropoutFractionInput > 0 )
+        if(nn.testing)
+            nn.a{1} = nn.a{1}.*(1 - nn.dropoutFractionInput);
+        else
+            nn.dropOutMaskInput = (rand(size(nn.a{1}))>nn.dropoutFractionInput);
+            nn.a{1} = nn.a{1}.*nn.dropOutMaskInput;
+        end
+    end
+    
 
     %feedforward pass
     for i = 2 : n-1
-        %dropout input layers
-        if(i == 2 && nn.dropoutFractionInput > 0 )
-            if(nn.testing)
-                nn.a{i-1} = nn.a{i-1}.*(1 - nn.dropoutFractionInput);
-            else
-                nn.dropOutMaskInput = (rand(size(nn.a{1}))>nn.dropoutFractionInput);
-                nn.a{1} = nn.a{1}.*nn.dropOutMaskInput;
-            end
-        end
-        
-        
+
+  
         
         switch nn.activation_function 
             case 'sigm'
