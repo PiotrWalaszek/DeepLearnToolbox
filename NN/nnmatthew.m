@@ -32,9 +32,6 @@ for target_class = 1:n_output    % testing: set to four
     [TP,TN,FP,FN,MCC] =  matthew_calc(pred_class,true_class);
     mcc(target_class) = MCC;
     
-    if target_class ==2
-        ttt = 1;
-    end
     %   testing
     %     disp([target_class,MCC])
     %     disp([pred_class;

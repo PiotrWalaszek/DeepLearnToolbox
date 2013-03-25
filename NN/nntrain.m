@@ -17,7 +17,7 @@ loss.train.e_errfun        = [];
 loss.val.e                 = [];
 loss.val.e_errfun          = [];
 
-corrfoeff_old = -inf;
+corrfoeff_old = -999999999;
 
 if nargin == 6
     opts.validation = 1;
