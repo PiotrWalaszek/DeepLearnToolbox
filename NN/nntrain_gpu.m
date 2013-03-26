@@ -61,6 +61,7 @@ else
     var_learningRate_flag = 0;
 end
 
+% Sets the number of evaluation training datasets to use
 % set this parameter to something small if you run into memory problems
 if ~isfield(opts,'ntrainforeval') || isempty(opts.ntrainforeval)
     opts.ntrainforeval = m;
