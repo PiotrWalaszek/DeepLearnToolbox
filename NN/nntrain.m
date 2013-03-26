@@ -5,10 +5,6 @@ function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 % opts.batchsize. Returns a neural network nn with updated activations,
 % errors, weights and biases, (nn.a, nn.e, nn.W, nn.b) and L, the sum
 % squared error for each training minibatch.
-if nargin < 7
-    outputpath = 'best_nn_weights';
-end
-
 assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
@@ -121,6 +117,11 @@ for i = 1 : numepochs
     % plot if figure is available
     if ishandle(fhandle)
         opts.plotfun(nn, fhandle, loss, opts, i);
+        
+        %save current figure to the output folder after every 10 epochs
+        if save_nn_flag && mod(i,10) == 0
+            save_fig(opts.outputfolder,[],[40 25]);
+        end
     end
     
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
@@ -128,7 +129,7 @@ for i = 1 : numepochs
     %save model after every ten epochs if it is better than the previous
     %saved model
     if save_nn_flag && mod(i,10) == 0
-       corrfoeff = nnmatthew(nn, val_x, val_y);
+       corrfoeff = nnmatthew(nn, val_x, val_y);       
        
        if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
