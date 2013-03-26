@@ -117,7 +117,7 @@ for i = 1 : numepochs
         dnn = nnff_gpu(dnn, dbatch_x, dbatch_y);
         dnn = nnbp_gpu(dnn);
         dnn = nnapplygrads_gpu(dnn);      
-        L(n) = dnn.L;        
+        L(n) = gather(dnn.L);        
         n = n + 1;
     end
     
