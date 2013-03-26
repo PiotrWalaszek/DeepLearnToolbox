@@ -118,9 +118,9 @@ for i = 1 : numepochs
     if ishandle(fhandle)
         opts.plotfun(nn, fhandle, loss, opts, i);
         
-        %save current figure to the output folder after every 10 epochs
+        %save figure to the output folder after every 10 epochs
         if save_nn_flag && mod(i,10) == 0
-            save_fig(opts.outputfolder,[],[40 25]);
+            save_fig(fhandle,opts.outputfolder,2,[40 25],14);
         end
     end
     
@@ -133,7 +133,7 @@ for i = 1 : numepochs
        
        if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            save([opts.outputfolder '.mat'],'nn','opts','epoch_nr');
+            save([opts.outputfolder '.mat'],'nn','opts','epoch_nr','loss');
             disp(['Saved weights to: ' opts.outputfolder]);
             corrfoeff_old = corrfoeff(1);
        end
