@@ -32,14 +32,14 @@ if isfield(opts,'plot') && opts.plot == 1
     
 end
 
-if isfield(opts, 'outputfolder')
+if isfield(opts, 'outputfolder') && ~isempty(opts.outputfolder)
     save_nn_flag = 1;
 else
     save_nn_flag = 0;
 end
 
 %variable momentum
-if isfield(opts, 'momentum_variable')
+if isfield(opts, 'momentum_variable') && ~isempty(opts.momentum_variable)
     if length(opts.momentum_variable) ~= opts.numepochs
         error('opts.momentum_variable must specify a momentum value for each epoch ie length(opts.momentum_variable) == opts.numepochs')
     end
@@ -49,7 +49,7 @@ else
 end
 
 %variable learningrate
-if isfield(opts, 'learningRate_variable')
+if isfield(opts, 'learningRate_variable') && ~isempty(opts.learningRate_variable)
     if length(opts.learningRate_variable) ~= opts.numepochs
         error('opts.learningRate_variable must specify a learninrate value for each epoch ie length(opts.learningRate_variable) == opts.numepochs')
     end
@@ -121,6 +121,7 @@ for i = 1 : numepochs
         %save figure to the output folder after every 10 epochs
         if save_nn_flag && mod(i,10) == 0
             save_figure(fhandle,opts.outputfolder,2,[40 25],14);
+            disp(['Saved figure to: ' opts.outputfolder]);
         end
     end
     

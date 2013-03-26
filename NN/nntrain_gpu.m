@@ -8,9 +8,6 @@ function [hnn, L,hloss]  = nntrain_gpu(hnn, htrain_x, htrain_y, opts, hval_x, hv
 %
 % hVARNAME is a variable on the host
 % dVARNAME is a varibale on the gpu device
-if nargin < 7
-    outputpath = 'best_nn_weights';
-end
 
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 m = size(htrain_x, 1);
@@ -38,14 +35,14 @@ if isfield(opts,'plot') && opts.plot == 1
     
 end
 
-if isfield(opts, 'outputfolder')
+if isfield(opts, 'outputfolder') && ~isempty(opts.outputfolder)
     save_nn_flag = 1;
 else
     save_nn_flag = 0;
 end
 
 %variable momentum
-if isfield(opts, 'momentum_variable')
+if isfield(opts, 'momentum_variable') && ~isempty(opts.momentum_variable)
     if length(opts.momentum_variable) ~= opts.numepochs
         error('opts.momentum_variable must specify a momentum value for each epoch ie length(opts.momentum_variable) == opts.numepochs')
     end
@@ -55,7 +52,7 @@ else
 end
 
 %variable learningrate
-if isfield(opts, 'learningRate_variable')
+if isfield(opts, 'learningRate_variable') && ~isempty(opts.learningRate_variable)
     if length(opts.learningRate_variable) ~= opts.numepochs
         error('opts.learningRate_variable must specify a learninrate value for each epoch ie length(opts.learningRate_variable) == opts.numepochs')
     end
@@ -65,7 +62,7 @@ else
 end
 
 % set this parameter to something small if you run into memory problems
-if ~isfield(opts,'ntrainforeval')
+if ~isfield(opts,'ntrainforeval') && isempty(opts.ntrainforeval)
     opts.ntrainforeval = m;
 end
 
@@ -166,6 +163,7 @@ for i = 1 : numepochs
             %save figure to the output folder after every 10 epochs
             if save_nn_flag && mod(i,10) == 0
                 save_figure(fhandle,opts.outputfolder,2,[40 25],14);
+                disp(['Saved figure to: ' opts.outputfolder]);
             end
             
         end
@@ -183,9 +181,8 @@ for i = 1 : numepochs
         
         if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            %host loss, named loss to stick with convention from nntrain
-            loss = cpLossToHost(dloss,opts);
-            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr','loss');
+            hloss = cpLossToHost(dloss,opts);
+            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr','hloss');
             disp(['Saved weights to: ' opts.outputfolder]);
             corrfoeff_old = corrfoeff(1);
         end

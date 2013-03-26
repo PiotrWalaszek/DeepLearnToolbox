@@ -14,10 +14,11 @@ function nn = nnsetup(architecture)
     nn.sparsityTarget                   = 0.05;         %  Sparsity target
     nn.inputZeroMaskedFraction          = 0;            %  Used for Denoising AutoEncoders
     nn.dropoutFraction                  = 0;            %  Dropout level (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
-    nn.dropoutFractionInput             = 0;            %  Dropout level on input (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
     nn.testing                          = 0;            %  Internal variable. nntest sets this to one.
     nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
     nn.normalize_momentum               = 0;            %  do not use this for gpu does not work for some reason
+    nn.errfun                           = [];           %  Empty for standard error options: @nnmatthew, @nnmatthew_gpu
+    
     for i = 2 : nn.n   
         % weights and weight momentum
         nn.W{i - 1} = (rand(nn.size(i), nn.size(i - 1)+1) - 0.5) * 2 * 4 * sqrt(6 / (nn.size(i) + nn.size(i - 1)));
