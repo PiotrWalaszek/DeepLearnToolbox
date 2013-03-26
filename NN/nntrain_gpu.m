@@ -1,17 +1,23 @@
-function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
+function [hnn, L,hloss]  = nntrain_gpu(hnn, htrain_x, htrain_y, opts, hval_x, hval_y)
 %NNTRAIN trains a neural net on cpu
 % [nn, L] = nnff(nn, x, y, opts) trains the neural network nn with input x and
 % output y for opts.numepochs epochs, with minibatches of size
 % opts.batchsize. Returns a neural network nn with updated activations,
 % errors, weights and biases, (nn.a, nn.e, nn.W, nn.b) and L, the sum
 % squared error for each training minibatch.
-assert(isfloat(train_x), 'train_x must be a float');
+%
+% hVARNAME is a variable on the host
+% dVARNAME is a varibale on the gpu device
+if nargin < 7
+    outputpath = 'best_nn_weights';
+end
+
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
-loss.train.e               = [];
-loss.train.e_errfun        = [];
-loss.val.e                 = [];
-loss.val.e_errfun          = [];
+hloss.train.e               = [];
+hloss.train.e_errfun        = [];
+hloss.val.e                 = [];
+hloss.val.e_errfun          = [];
 
 corrfoeff_old = -999999999;
 
@@ -59,7 +65,11 @@ else
 end
 
 
-m = size(train_x, 1);
+
+
+
+
+m = size(htrain_x, 1);
 
 batchsize = opts.batchsize;
 numepochs = opts.numepochs;
@@ -70,6 +80,13 @@ numbatches = floor(m / batchsize);
 
 L = zeros(numepochs*numbatches,1);
 n = 1;
+
+
+% COPY NETWORK TO DEVICE 
+dnn = cpNNtoGPU(hnn);
+
+
+
 for i = 1 : numepochs
     tic;
     %update momentum
@@ -84,44 +101,44 @@ for i = 1 : numepochs
     kk = randperm(m);
     for l = 1 : numbatches
         
-        batch_x = extractminibatch(kk,l,batchsize,train_x);
+        hbatch_x = extractminibatch(kk,l,batchsize,htrain_x);
         
         %Add noise to input (for use in denoising autoencoder)
         if(nn.inputZeroMaskedFraction ~= 0)
-            batch_x = batch_x.*(rand(size(batch_x))>nn.inputZeroMaskedFraction);
+            hbatch_x = hbatch_x.*(rand(size(hbatch_x))>nn.inputZeroMaskedFraction);
         end
         
-        batch_y = extractminibatch(kk,l,batchsize,train_y);
         
-        nn = nnff(nn, batch_x, batch_y);
-        nn = nnbp(nn);
-        nn = nnapplygrads(nn);
+        % COPY BATCHES TO GPU DEVICE
+        dbatch_x = gpuArray(hbatch_x);
+        dbatch_y = gpuArray(extractminibatch(kk,l,batchsize,htrain_y));
         
-        L(n) = nn.L;
-        
+        % use gpu functions to train
+        dnn = nnff_gpu(dnn, dbatch_x, dbatch_y);
+        dnn = nnbp_gpu(dnn);
+        dnn = nnapplygrads_gpu(dnn);      
+        L(n) = dnn.L;        
         n = n + 1;
     end
     
     t = toc;
     
     
+    % copy netowrk to host and evalute performance
+    hnn = cpNNtoHost(dnn);
+    
     %after each epoch update losses
     if opts.validation == 1
-        loss = nneval(nn, loss, train_x, train_y, val_x, val_y);
+        hloss = nneval(hnn, hloss, htrain_x, htrain_y, hval_x, hval_y);
     else
-        loss = nneval(nn, loss, train_x, train_y);
+        hloss = nneval(hnn, hloss, htrain_x, htrain_y);
     end
     
 
     
     % plot if figure is available
     if ishandle(fhandle)
-        opts.plotfun(nn, fhandle, loss, opts, i);
-        
-        %save figure to the output folder after every 10 epochs
-        if save_nn_flag && mod(i,10) == 0
-            save_fig(fhandle,opts.outputfolder,2,[40 25],14);
-        end
+        opts.plotfun(hnn, fhandle, hloss, opts, i);
     end
     
     disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
@@ -129,16 +146,20 @@ for i = 1 : numepochs
     %save model after every ten epochs if it is better than the previous
     %saved model
     if save_nn_flag && mod(i,10) == 0
-       corrfoeff = nnmatthew(nn, val_x, val_y);       
+       corrfoeff = nnmatthew(hnn, hval_x, hval_y);
        
        if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            save([opts.outputfolder '.mat'],'nn','opts','epoch_nr','loss');
+            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr');
             disp(['Saved weights to: ' opts.outputfolder]);
             corrfoeff_old = corrfoeff(1);
        end
     end
     
 end
+
+clear dnn
+clear dbatch_x
+clear dbatch_y
 end
 
