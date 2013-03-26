@@ -166,7 +166,8 @@ for i = 1 : numepochs
         t2 = toc(evalt);
         disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
             '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is '...
-            num2str(mean(L((n-numbatches):(n-1)))) '. Eval time: ' num2str(t2)]);
+            num2str(mean(L((n-numbatches):(n-1)))) '. \n\t Eval time: ' num2str(t2) ...
+            '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.learningRate)]);
         
     %save model after every ten epochs if it is better than the previous
     %saved model
