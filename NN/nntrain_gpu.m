@@ -161,6 +161,13 @@ for i = 1 : numepochs
         if ishandle(fhandle)
             hloss = cpLossToHost(dloss,opts);
             opts.plotfun([], fhandle, hloss, opts, i);
+            
+                    
+            %save figure to the output folder after every 10 epochs
+            if save_nn_flag && mod(i,10) == 0
+                save_figure(fhandle,opts.outputfolder,2,[40 25],14);
+            end
+            
         end
         
         t2 = toc(evalt);
@@ -176,7 +183,9 @@ for i = 1 : numepochs
         
         if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr');
+            %host loss, named loss to stick with convention from nntrain
+            loss = cpLossToHost(dloss,opts);
+            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr','loss');
             disp(['Saved weights to: ' opts.outputfolder]);
             corrfoeff_old = corrfoeff(1);
         end

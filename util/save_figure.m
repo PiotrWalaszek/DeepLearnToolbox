@@ -3,7 +3,7 @@ function save_figure(fhandle, filename, lineWidth, dimensions, fontSize)
 %set fontsize to NaN or -1 to keep the current fontsize settings.
 obj = findall(fhandle,'type','Text'); set(obj,'FontSize',fontSize)
 obj = findall(fhandle,'type','axes'); set(obj,'FontSize',fontSize)
-set(fhandle,'FontSize',fontSize)
+haxes = get(fhandle,'CurrentAxes'); set(haxes,'FontSize',fontSize)
 obj = findall(fhandle,'type','Line'); set(obj,'LineWidth',lineWidth)
 set(fhandle,'PaperPositionMode','manual');
 set(fhandle,'PaperUnits','centimeters');

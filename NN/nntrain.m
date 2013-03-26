@@ -120,9 +120,10 @@ for i = 1 : numepochs
         
         %save figure to the output folder after every 10 epochs
         if save_nn_flag && mod(i,10) == 0
-            save_fig(fhandle,opts.outputfolder,2,[40 25],14);
+            save_figure(fhandle,opts.outputfolder,2,[40 25],14);
         end
     end
+    
     
    t2 = toc(evalt);
         disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
