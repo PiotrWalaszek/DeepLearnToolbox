@@ -10,7 +10,7 @@ set(fhandle,'PaperUnits','centimeters');
 set(fhandle,'PaperPosition',[1 1 dimensions(1) dimensions(2)]);
 try
     print(fhandle,'-depsc',[filename '.eps'])
-catch 
+catch
     warning('Could not save EPS file')
 end
 saveas(fhandle,filename,'fig')

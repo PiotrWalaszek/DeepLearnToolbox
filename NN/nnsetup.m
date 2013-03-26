@@ -17,7 +17,7 @@ function nn = nnsetup(architecture)
     nn.dropoutFractionInput             = 0;            %  Dropout level on input (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
     nn.testing                          = 0;            %  Internal variable. nntest sets this to one.
     nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
-    nn.normalize_momentum               = 1;            %  Do not use this for GPU
+    nn.normalize_momentum               = 0;            %  do not use this for gpu does not work for some reason
     for i = 2 : nn.n   
         % weights and weight momentum
         nn.W{i - 1} = (rand(nn.size(i), nn.size(i - 1)+1) - 0.5) * 2 * 4 * sqrt(6 / (nn.size(i) + nn.size(i - 1)));

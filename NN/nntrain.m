@@ -71,7 +71,7 @@ numbatches = floor(m / batchsize);
 L = zeros(numepochs*numbatches,1);
 n = 1;
 for i = 1 : numepochs
-    tic;
+    epochtime = tic;
     %update momentum
     if var_momentum_flag
        nn.momentum = opts.momentum_variable(i);
@@ -102,9 +102,9 @@ for i = 1 : numepochs
         n = n + 1;
     end
     
-    t = toc;
+    t1 = toc(epochtime);
     
-    
+    evalt = tic;
     %after each epoch update losses
     if opts.validation == 1
         loss = nneval(nn, loss, train_x, train_y, val_x, val_y);
@@ -124,8 +124,11 @@ for i = 1 : numepochs
         end
     end
     
-    disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1))))]);
-    
+   t2 = toc(evalt);
+        disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
+            '. Took ' num2str(t1) ' seconds' '. Mean squared error on training set is '...
+            num2str(mean(L((n-numbatches):(n-1)))) '. Eval time: ' num2str(t2)]);
+        
     %save model after every ten epochs if it is better than the previous
     %saved model
     if save_nn_flag && mod(i,10) == 0
