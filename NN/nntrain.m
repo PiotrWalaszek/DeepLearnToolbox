@@ -26,7 +26,7 @@ fhandle = [];
 if isfield(opts,'plot') && opts.plot == 1
     fhandle = figure();
     %check if plotting function is supplied, else use nnupdatefigures
-    if ~isfield(opts,'plotfun')
+    if ~isfield(opts,'plotfun') || isempty(opts.plot)
         opts.plotfun = @nnupdatefigures;
     end
     

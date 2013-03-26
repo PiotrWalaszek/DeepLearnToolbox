@@ -29,7 +29,7 @@ fhandle = [];
 if isfield(opts,'plot') && opts.plot == 1
     fhandle = figure();
     %check if plotting function is supplied, else use nnupdatefigures
-    if ~isfield(opts,'plotfun')
+    if ~isfield(opts,'plotfun')  || isempty(opts.plot)
         opts.plotfun = @nnupdatefigures;
     end
     
@@ -62,7 +62,7 @@ else
 end
 
 % set this parameter to something small if you run into memory problems
-if ~isfield(opts,'ntrainforeval') && isempty(opts.ntrainforeval)
+if ~isfield(opts,'ntrainforeval') || isempty(opts.ntrainforeval)
     opts.ntrainforeval = m;
 end
 
