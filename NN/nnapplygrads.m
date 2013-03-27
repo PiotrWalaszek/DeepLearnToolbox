@@ -23,7 +23,7 @@ function nn = nnapplygrads(nn)
         if nn.weightMaxL2norm > 0;
            %Get the L2 norm indput to the individual Neurons
            L2_norm_input = sum(nn.W{i}.^2,2);
-           for j = 1:nn.size(i+1) %loop throug the neurons;
+           for j = 1:nn.size(i+1) %loop through the neurons;
                if L2_norm_input(j) > nn.weightMaxL2norm
                   nn.W{i}(j,:) = nn.W{i}(j,:)./sqrt(L2_norm_input(j)/nn.weightMaxL2norm);
                end
