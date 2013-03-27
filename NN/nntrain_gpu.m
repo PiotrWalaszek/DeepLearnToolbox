@@ -11,7 +11,7 @@ function [hnn, L,hloss]  = nntrain_gpu(hnn, htrain_x, htrain_y, opts, hval_x, hv
 gpu = gpuDevice();
 reset(gpu);
 wait(gpu);
-disp(['GPU memory available: ', num2str(gpu.FreeMemory)]);
+disp(['GPU memory available (Gb): ', num2str(gpu.FreeMemory / 10^9)]);
 cast = @single;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 m = size(htrain_x, 1);
