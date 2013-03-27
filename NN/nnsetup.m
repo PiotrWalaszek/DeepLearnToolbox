@@ -10,6 +10,7 @@ function nn = nnsetup(architecture)
     nn.learningRate                     = 2;            %  learning rate Note: typically needs to be lower when using 'sigm' activation function and non-normalized inputs.
     nn.momentum                         = 0.5;          %  Momentum
     nn.weightPenaltyL2                  = 0;            %  L2 regularization
+    nn.weightMaxL2norm                  = 0;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
     nn.nonSparsityPenalty               = 0;            %  Non sparsity penalty
     nn.sparsityTarget                   = 0.05;         %  Sparsity target
     nn.inputZeroMaskedFraction          = 0;            %  Used for Denoising AutoEncoders
