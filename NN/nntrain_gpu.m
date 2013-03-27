@@ -8,7 +8,11 @@ function [hnn, L,hloss]  = nntrain_gpu(hnn, htrain_x, htrain_y, opts, hval_x, hv
 %
 % hVARNAME is a variable on the host
 % dVARNAME is a varibale on the gpu device
-
+gpu = gpuDevice();
+reset(gpu);
+wait(gpu);
+disp(['GPU memory available: ', num2str(gpu.FreeMemory)]);
+cast = @single;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 m = size(htrain_x, 1);
 dloss.train.e               = [];
@@ -84,7 +88,7 @@ n = 1;
 
 
 % COPY NETWORK TO DEVICE
-dnn = cpNNtoGPU(hnn);
+dnn = cpNNtoGPU(hnn,cast);
 
 
 
@@ -172,8 +176,10 @@ for i = 1 : numepochs
         t2 = toc(evalt);
         disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
             '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is '...
-            num2str(mean(L((n-numbatches):(n-1)))) '. \n\t Eval time: ' num2str(t2) ...
-            '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.learningRate)]);
+            num2str(mean(L((n-numbatches):(n-1))))]) 
+        disp(['         Eval time: ' num2str(t2) ...
+            '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.learningRate)...
+            '. free gpu mem (Gb): ', num2str(gpu.FreeMemory./10^9)]);
         
     %save model after every ten epochs if it is better than the previous
     %saved model
@@ -202,5 +208,7 @@ hloss = cpLossToHost(dloss, opts);
 clear dnn
 clear dbatch_x
 clear dbatch_y
-end
 
+reset(gpu);
+wait(gpu);
+end
