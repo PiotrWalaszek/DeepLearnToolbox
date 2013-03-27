@@ -14,7 +14,7 @@ if nargin == 6
 end
 
 %If error function is supplied apply it
-if ~ismepty(nn.errfun)
+if ~isempty(nn.errfun)
     [er_train, ~]               = nn.errfun(nn, train_x, train_y);
     loss.train.e_errfun         = [loss.train.e_errfun; er_train];
     
