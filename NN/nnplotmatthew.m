@@ -25,9 +25,16 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
             p = plot(x_ax, L.train.e_errfun(:,b), 'b', ...
                      x_ax, L.val.e_errfun(:,b),   'm');
             ylabel('MCC'); xlabel('Epoch'); 
+            
+            if b+1 ==nplots
+                title(sprintf('Matthew correlation: ALL CLASSES',b))
+            legend(p, {'Training', 'Validation'},'Location','Best');
+            set(gca, 'Xlim',[0,opts.numepochs + 1])
+            else
             title(sprintf('Matthew correlation: Class %i',b))
             legend(p, {'Training', 'Validation'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
+            end
         end
         
     else
@@ -38,12 +45,21 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
         set(gca, 'Xlim',[0,opts.numepochs + 1])
         
         for b = 1:nplots-1
+            
+            
+            
             subplot(n_rows,n_cols,b+1);
             p = plot(x_ax, L.train.e_errfun(:,b), 'b');
             ylabel('MCC'); xlabel('Epoch'); 
-            title(sprintf('Class %i',b))
+            if b+1 ==nplots
+                title(sprintf('Matthew correlation: ALL CLASSES',b))
             legend(p, {'Training'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
+            else
+            title(sprintf('Matthew correlation: Class %i',b))
+            legend(p, {'Training'},'Location','Best');
+            set(gca, 'Xlim',[0,opts.numepochs + 1])
+            end
         end
         
     end    
