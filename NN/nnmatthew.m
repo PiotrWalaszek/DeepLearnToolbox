@@ -19,7 +19,8 @@ pred = nnpredict(nn, x);
 % testing
 %expected = [1,2,1,1,2,3,4];
 %labels   = [1,2,1,1,2,3,2];
-mcc = zeros(1,n_output);
+mcc = zeros(1,n_output + 1);
+TPt = 0; TNt = 0; FPt = 0; FNt = 0;
 for target_class = 1:n_output    % testing: set to four    
     
     %create binary vectors for each class. For each class (target_class)
@@ -31,7 +32,12 @@ for target_class = 1:n_output    % testing: set to four
     %
     [TP,TN,FP,FN,MCC] =  matthew_calc(pred_class,true_class);
     mcc(target_class) = MCC;
+    TPt = TPt + TP;
+    TNt = TNt + TN; 
+    FPt = FPt + FP; 
+    FNt = FNt + FN;
     
+    mcc(n_output+1) = (TP * TN - FP * FN) ./ sqrt((TP+FP) * (TP+FN) * (TN+FP) * (TN + FN));
     %   testing
     %     disp([target_class,MCC])
     %     disp([pred_class;
