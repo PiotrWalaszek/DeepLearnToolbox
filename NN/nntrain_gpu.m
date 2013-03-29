@@ -115,8 +115,8 @@ for i = 1 : numepochs
         
         
         % COPY BATCHES TO GPU DEVICE
-        dbatch_x = gpuArray(hbatch_x);
-        dbatch_y = gpuArray(extractminibatch(kk,l,batchsize,htrain_y));
+        dbatch_x = gpuArray(cast(hbatch_x));
+        dbatch_y = gpuArray(cast(extractminibatch(kk,l,batchsize,htrain_y)));
         
         % use gpu functions to train
         dnn = nnff_gpu(dnn, dbatch_x, dbatch_y);
