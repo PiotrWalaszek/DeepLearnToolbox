@@ -18,7 +18,7 @@ function nn = nnff_gpu(nn, x, y)
             case 'tanh_opt'
                 nn.a{i} = arrayfun(@tanh_opt,nn.a{i - 1} * nn.W{i - 1}');
             case 'ReLU'  % linear rectified units max(0,x) 
-                nn.a{i} = ReLU(nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = arrayfun(@ReLU,nn.a{i - 1} * nn.W{i - 1}');
         end
         
         %dropout
