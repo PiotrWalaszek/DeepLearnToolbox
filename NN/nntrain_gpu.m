@@ -65,11 +65,6 @@ else
     var_learningRate_flag = 0;
 end
 
-% Sets the number of evaluation training datasets to use
-% set this parameter to something small if you run into memory problems
-if ~isfield(opts,'ntrainforeval') || isempty(opts.ntrainforeval)
-    opts.ntrainforeval = m;
-end
 
 
 
@@ -139,8 +134,8 @@ for i = 1 : numepochs
         if i==1
             %draws sample from training data
             sample = randsample(m,opts.ntrainforeval);
-            dtrain_x = gpuArray(htrain_x(sample,:));
-            dtrain_y = gpuArray(htrain_y(sample,:));
+            dtrain_x = gpuArray(cast(htrain_x(sample,:)));
+            dtrain_y = gpuArray(cast(htrain_y(sample,:)));
             
             if opts.validation == 1
                 dval_x = gpuArray(hval_x);
