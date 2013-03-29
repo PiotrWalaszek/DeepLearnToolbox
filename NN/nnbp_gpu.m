@@ -15,8 +15,11 @@ function nn = nnbp_gpu(nn)
         switch nn.activation_function 
             case 'sigm'
                 d_act = nn.a{i} .* (gpuArray.ones(size(nn.a{i})) - nn.a{i});
+            case 'ReLU'  % linear rectified units max(0,x) 
+                d_act =nn.a{i} .* (nn.a{i}>0);
             case 'tanh_opt'
                 d_act = 1.7159 * 2/3 * (gpuArray.ones(size(nn.a{i})) - 1/(1.7159)^2 * nn.a{i}.^2);
+            
         end
         
         if(nn.nonSparsityPenalty>0)

@@ -32,6 +32,8 @@ function nn = nnff(nn, x, y)
                 nn.a{i} = sigm(nn.a{i - 1} * nn.W{i - 1}');
             case 'tanh_opt'
                 nn.a{i} = tanh_opt(nn.a{i - 1} * nn.W{i - 1}');
+            case 'ReLU'  % linear rectified units max(0,x) 
+                nn.a{i} = ReLU(nn.a{i - 1} * nn.W{i - 1}');
         end
         
         %dropout hidden layers
@@ -71,6 +73,10 @@ function nn = nnff(nn, x, y)
         case {'sigm', 'linear'}
             nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m; 
         case 'softmax'
-            nn.L = -sum(sum(y .* log(nn.a{n}))) / m;
+            if nn.activation_function ~= 'ReLU'
+                nn.L = -sum(sum(y .* log(nn.a{n}))) / m;
+            else
+                
+            end
     end
 end

@@ -10,6 +10,25 @@ test_y  = double(test_y);
 [train_x, mu, sigma] = zscore(train_x);
 test_x = normalize(test_x, mu, sigma);
 
+
+
+%% ex1 rectified uit
+rng(0);
+nn = nnsetup([784 100 10]);
+nn.activation_function = 'ReLU';    %  Sigmoid activation function
+nn.output              = 'sigm';    %  use softmax output
+opts.numepochs =  100;   %  Number of full sweeps through data
+opts.batchsize =1000;  %  Take a mean gradient step over this many samples
+opts.plot              = 1;  
+nn.learningRate = 0.1
+[nn,L,loss] = nntrain(nn, train_x, train_y, opts);
+
+[er, bad] = nntest(nn, test_x, test_y);
+
+
+
+
+
 %% ex1 vanilla neural net
 rng(0);
 nn = nnsetup([784 100 10]);
@@ -89,7 +108,26 @@ vx   = train_x(1:10000,:);
 tx = train_x(10001:end,:);
 vy   = train_y(1:10000,:);
 ty = train_y(10001:end,:);
+%%
 
+%% ex1 rectified uit
+rng(0);
+nn = nnsetup([784 100 10]);
+nn.activation_function = 'ReLU';    %  Sigmoid activation function
+nn.output              = 'sigm';    %  use softmax output
+nn.dropoutFraction     = 0.5
+opts.numepochs =  20;   %  Number of full sweeps through data
+opts.batchsize =1000;  %  Take a mean gradient step over this many samples
+opts.plot              = 1;  
+nn.learningRate = 0.1;
+nn.momentum = 0.9
+[nn,L,loss] = nntrain(nn, tx, ty, opts,vx,vy);
+
+[er, bad] = nntest(nn, test_x, test_y);
+
+
+
+%%
 rng(0);
 nn.activation_function  = 'sigm';
 nn                      = nnsetup([784 200 10]);     
