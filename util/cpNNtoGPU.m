@@ -27,7 +27,20 @@ for i=1:numel(fld)
             for j=1:numel(hnn.a)
                 dnn.a{j} = gpuArray(cast(hnn.a{j}));
             end
+        case 'learningRate'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+        case 'weightPenaltyL2'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+        case 'dropoutFraction'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName))); 
+        case 'weightMaxL2norm'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));  
+        case 'momentum'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+        case 'inputZeroMaskedFraction'
+            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
         otherwise
+            
             dnn.(fieldName) = hnn.(fieldName);
     end
 end
