@@ -48,8 +48,9 @@ function nn = nnbp_gpu(nn)
     for i = 1 : (n - 1)
         if i+1==n
             nn.dW{i} = (d{i + 1}' * nn.a{i}) / size(d{i + 1}, 1);
+            nn.db{i} = (bd{i + 1}'; 
         else
-            nn.dW{i} = (d{i + 1}(:,2:end)' * nn.a{i}) / size(d{i + 1}, 1);      
+            nn.dW{i} = (d{i + 1}' * nn.a{i}) / size(d{i + 1}, 1);      
         end
     end
     clear d
