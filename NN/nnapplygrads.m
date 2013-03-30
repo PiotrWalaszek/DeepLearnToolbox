@@ -9,15 +9,31 @@ function nn = nnapplygrads(nn)
         else
             dW = nn.dW{i};
         end
+        db = nn.db{i};
         
         dW = nn.learningRate * dW;
+        db = nn.learningRate * db;
+        
         
         if(nn.momentum>0)
             nn.vW{i} = nn.momentum*nn.vW{i} + dW;
-            dW = nn.vW{i};
-        end
             
+            if i ~= 1
+                nn.vb{i} = nn.momentum*nn.vb{i} + db;
+                db = nn.vb{i};
+            end
+            dW = nn.vW{i};
+            
+        end
+        
+        
+        
         nn.W{i} = nn.W{i} - dW;
+        if i ~= 1
+            nn.b{i} = nn.b{i} - db;
+        end
+        
+        
         
         %Max L2 norm of incoming weights to individual neurons
         if nn.weightMaxL2norm > 0;

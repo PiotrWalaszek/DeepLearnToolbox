@@ -32,15 +32,18 @@ nn.learningRate = 0.1
 %% ex1 vanilla neural net
 rng(0);
 nn = nnsetup([784 100 10]);
-opts.numepochs =  1;   %  Number of full sweeps through data
+nn.dropoutFraction = 0.5;
+opts.numepochs =  25;   %  Number of full sweeps through data
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
+
+opts.plot = 1;
 [nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
-
+er
 assert(er < 0.08, 'Too big error');
 
-% Make an artificial one and verify that we can predict it
+%% Make an artificial one and verify that we can predict it
 x = zeros(1,28,28);
 x(:, 14:15, 6:22) = 1;
 x = reshape(x,1,28^2);
@@ -68,7 +71,7 @@ nn = nnsetup([784 100 10]);
 
 nn.dropoutFraction = 0.5;   %  Dropout fraction 
 opts.numepochs =  1;        %  Number of full sweeps through data
-opts.batchsize = 100;       %  Take a mean gradient step over this many samples
+opts.batchsize = 200;       %  Take a mean gradient step over this many samples
 
 [nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 

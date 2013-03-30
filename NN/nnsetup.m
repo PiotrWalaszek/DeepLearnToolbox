@@ -5,7 +5,6 @@ function nn = nnsetup(architecture)
 
     nn.size   = architecture;
     nn.n      = numel(nn.size);                         %number of layers
-    
     nn.activation_function              = 'tanh_opt';   %  Activation functions of hidden layers: 'sigm' (sigmoid) or 'tanh_opt' (optimal tanh).
     nn.learningRate                     = 2;            %  learning rate Note: typically needs to be lower when using 'sigm' activation function and non-normalized inputs.
     nn.momentum                         = 0.5;          %  Momentum
@@ -22,9 +21,11 @@ function nn = nnsetup(architecture)
     
     for i = 2 : nn.n   
         % weights and weight momentum
-        nn.W{i - 1} =(rand(nn.size(i), nn.size(i - 1)+1) - 0.5) * 2 * 4 * sqrt(single(6 / (nn.size(i) + nn.size(i - 1))));
-        nn.vW{i - 1} = zeros(size(nn.W{i - 1}));
         
+        nn.W{i - 1} =(rand(nn.size(i), nn.size(i - 1)) - 0.5) * 2 * 4 * sqrt(single(6 / (nn.size(i) + nn.size(i - 1))));
+        nn.b{i - 1} = rand(nn.size(i),1); 
+        nn.vW{i - 1} = zeros(size(nn.W{i - 1}));
+        nn.vb{i - 1} = zeros(size(nn.b{i - 1}));
         % average activations (for use with sparsity)
         nn.p{i}     = zeros(1, nn.size(i));   
     end

@@ -6,9 +6,12 @@ function nn = nnbp_gpu(nn)
     sparsityError = 0;
     switch nn.output
         case 'sigm'
-            d{n} = - nn.e .* (nn.a{n} .* (1 - nn.a{n}));
+            d_act = - nn.e .* (nn.a{n} .* (1 - nn.a{n}));
+            d{n} = d_act;
+            bd{n}   = single(ones(1,nn.size(n-1))) * d_act; 
         case {'softmax','linear'}
             d{n} = - nn.e;
+            bd{n}   = single(ones(1,nn.size(n-1))) * -nn.e;
     end
     for i = (n - 1) : -1 : 2
         % Derivative of the activation function
@@ -30,12 +33,14 @@ function nn = nnbp_gpu(nn)
         % Backpropagate first derivatives
         if i+1==n % in this case in d{n} there is not the bias term to be removed             
             d{i} = (d{i + 1} * nn.W{i} + sparsityError) .* d_act; % Bishop (5.56)
+            bd{i} = (bd{i + 1} * nn.b{i} + sparsityError) .* d_act;
         else % in this case in d{i} the bias term has to be removed
             d{i} = (d{i + 1}(:,2:end) * nn.W{i} + sparsityError) .* d_act;
         end
+        clear d_act
         
         if(nn.dropoutFraction>0)
-            d{i} = d{i} .* [gpuArray.ones(size(d{i},1),1) nn.dropOutMask{i}];
+           d{i} = d{i} .* nn.dropOutMask{i};
         end
 
     end
@@ -46,5 +51,9 @@ function nn = nnbp_gpu(nn)
         else
             nn.dW{i} = (d{i + 1}(:,2:end)' * nn.a{i}) / size(d{i + 1}, 1);      
         end
+    end
+    clear d
+    for  u = 1:n
+        nn.a{u} = [];
     end
 end

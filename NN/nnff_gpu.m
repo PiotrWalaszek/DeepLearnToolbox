@@ -5,21 +5,21 @@ function nn = nnff_gpu(nn, x, y)
 
     n = nn.n;
     m = size(x, 1);
-    
-    x = [ones(m,1) x];
     nn.a{1} = x;
 
     %feedforward pass
     for i = 2 : n-1
+        inp = nn.a{i - 1} * nn.W{i - 1}' + repmat(nn.b{i-1}',m,1);
         switch nn.activation_function 
             case 'sigm'
                 % Calculate the unit's outputs (including the bias term)
-                nn.a{i} = arrayfun(@sigm,nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = arrayfun(@sigm,inp);
             case 'tanh_opt'
-                nn.a{i} = arrayfun(@tanh_opt,nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = arrayfun(@tanh_opt,inp);
             case 'ReLU'  % linear rectified units max(0,x) 
-                nn.a{i} = arrayfun(@ReLU,nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = arrayfun(@ReLU,inp);
         end
+        clear inp
         
         %dropout
         if(nn.dropoutFraction > 0)
@@ -35,21 +35,21 @@ function nn = nnff_gpu(nn, x, y)
         if(nn.nonSparsityPenalty>0)
             nn.p{i} = 0.99 * nn.p{i} + 0.01 * mean(nn.a{i}, 1);
         end
-        
-        %Add the bias term
-        nn.a{i} = [gpuArray.ones(m,1) nn.a{i}];
     end
+    
+    inp = nn.a{n - 1} * nn.W{n - 1}' + repmat(nn.b{n-1}',m,1);
     switch nn.output 
         case 'sigm'
-            nn.a{n} = arrayfun(@sigm, nn.a{n - 1} * nn.W{n - 1}');
+            nn.a{n} = arrayfun(@sigm, inp);
         case 'linear'
-            nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+            nn.a{n} = inp;
         case 'softmax'
-            nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+            nn.a{n} = inp;
             nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
             nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2)); 
     end
-
+    clear inp
+    
     %error and loss
     nn.e = y - nn.a{n};
     

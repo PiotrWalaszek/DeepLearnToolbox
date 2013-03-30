@@ -6,7 +6,6 @@ function nn = nnff(nn, x, y)
     n = nn.n;
     m = size(x, 1);
     
-    x = [ones(m,1) x];
     nn.a{1} = x;
     
 %     %dropout input layers, Note that no changes need to be done in the nnbp
@@ -25,15 +24,15 @@ function nn = nnff(nn, x, y)
     for i = 2 : n-1
 
   
-        
+        inp = nn.a{i - 1} * nn.W{i - 1}' + repmat(nn.b{i-1}',m,1);
         switch nn.activation_function 
             case 'sigm'
                 % Calculate the unit's outputs (including the bias term)
-                nn.a{i} = sigm(nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = sigm(inp);
             case 'tanh_opt'
-                nn.a{i} = tanh_opt(nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = tanh_opt(inp);
             case 'ReLU'  % linear rectified units max(0,x) 
-                nn.a{i} = ReLU(nn.a{i - 1} * nn.W{i - 1}');
+                nn.a{i} = ReLU(inp);
         end
         
         %dropout hidden layers
@@ -52,16 +51,18 @@ function nn = nnff(nn, x, y)
             nn.p{i} = 0.99 * nn.p{i} + 0.01 * mean(nn.a{i}, 1);
         end
         
-        %Add the bias term
-        nn.a{i} = [ones(m,1) nn.a{i}];
     end
+    
+    
+    
+    inp = nn.a{n - 1} * nn.W{n - 1}' + repmat(nn.b{n-1}',m,1);
     switch nn.output 
         case 'sigm'
-            nn.a{n} = sigm(nn.a{n - 1} * nn.W{n - 1}');
+            nn.a{n} = sigm(inp);
         case 'linear'
-            nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+            nn.a{n} = inp;
         case 'softmax'
-            nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+            nn.a{n} = inp;
             nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
             nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2)); 
     end
@@ -73,7 +74,7 @@ function nn = nnff(nn, x, y)
         case {'sigm', 'linear'}
             nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m; 
         case 'softmax'
-            if nn.activation_function ~= 'ReLU'
+            if ~strcmp(nn.activation_function,'ReLU')
                 nn.L = -sum(sum(y .* log(nn.a{n}))) / m;
             else
                 
