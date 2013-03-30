@@ -8,10 +8,10 @@ function nn = nnbp_gpu(nn)
         case 'sigm'
             d_act = - nn.e .* (nn.a{n} .* (1 - nn.a{n}));
             d{n} = d_act;
-            bd{n}   = single(ones(1,nn.size(n-1))) * d_act; 
+            bd{n}   = single(ones(1,size(nn.e,1))) * d_act; 
         case {'softmax','linear'}
             d{n} = - nn.e;
-            bd{n}   = single(ones(1,nn.size(n-1))) * -nn.e;
+            bd{n}   = single(ones(1,size(nn.e,1))) * -nn.e;
     end
     for i = (n - 1) : -1 : 2
         % Derivative of the activation function

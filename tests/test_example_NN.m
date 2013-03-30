@@ -34,7 +34,7 @@ rng(0);
 nn = nnsetup([784 100 10]);
 nn.dropoutFraction = 0.5;
 opts.numepochs =  25;   %  Number of full sweeps through data
-opts.batchsize = 100;  %  Take a mean gradient step over this many samples
+opts.batchsize = 200;  %  Take a mean gradient step over this many samples
 
 opts.plot = 1;
 [nn,L,loss] = nntrain(nn, train_x, train_y, opts);
