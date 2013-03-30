@@ -37,7 +37,6 @@ function nn = nnbp_gpu(nn)
         else % in this case in d{i} the bias term has to be removed
             d{i} = (d{i + 1}(:,2:end) * nn.W{i} + sparsityError) .* d_act;
         end
-        clear d_act
         
         if(nn.dropoutFraction>0)
            d{i} = d{i} .* nn.dropOutMask{i};
@@ -53,7 +52,6 @@ function nn = nnbp_gpu(nn)
             nn.dW{i} = (d{i + 1}' * nn.a{i}) / size(d{i + 1}, 1);      
         end
     end
-    clear d
     for  u = 1:n
         nn.a{u} = [];
     end

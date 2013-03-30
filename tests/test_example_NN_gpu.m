@@ -25,9 +25,9 @@ opts.ntrainforeval = 1000; % number of training samples that are copied to the g
                            % evalute training performance
                            % if you have a small dataset set this to number
                            % of samples in your training data
-[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
+%[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 [nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
-[er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
+%[er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
 [er_cpu, bad] = nntest(nn_cpu, test_x, test_y);
 fprintf('Error GPU (single): %f \n',er_gpu);
 fprintf('Error GPU (single); %f \n',er_cpu);
@@ -50,9 +50,9 @@ rng(0);
 nn = nnsetup([784 200 10]);
 
 fprintf('DOUBLE PRECISION PERFORMANCE \n')
-[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
+%[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 [nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
-[er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
+%[er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
 [er_cpu, bad] = nntest(nn_cpu, test_x, test_y);
 fprintf('Error GPU (double): %f \n',er_gpu);
 fprintf('Error GPU (double); %f \n',er_cpu);
