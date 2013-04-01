@@ -12,7 +12,8 @@ gpu = gpuDevice();
 reset(gpu);
 wait(gpu);
 disp(['GPU memory available (Gb): ', num2str(gpu.FreeMemory / 10^9)]);
-cast = @single;
+cast = hnn.cast;
+caststr = hnn.caststr;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 m = size(htrain_x, 1);
 dloss.train.e               = [];
@@ -105,7 +106,7 @@ for i = 1 : numepochs
         
         %Add noise to input (for use in denoising autoencoder)
         if(hnn.inputZeroMaskedFraction ~= 0)
-            hbatch_x = hbatch_x.*(rand(size(hbatch_x))>hnn.inputZeroMaskedFraction);
+            hbatch_x = hbatch_x.*(gpuArray.rand(size(hbatch_x),caststr)>hnn.inputZeroMaskedFraction);
         end
         
         

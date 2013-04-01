@@ -18,7 +18,8 @@ function nn = nnsetup(architecture)
     nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
     nn.normalize_momentum               = 0;            %  do not use this for gpu does not work for some reason
     nn.errfun                           = [];           %  Empty for standard error options: @nnmatthew, @nnmatthew_gpu
-    
+    nn.cast                             = @double;
+    nn.caststr                          = 'double';
     for i = 2 : nn.n   
         % weights and weight momentum
         

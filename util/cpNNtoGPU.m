@@ -7,9 +7,18 @@ for i=1:numel(fld)
             for j=1:numel(hnn.W)
                 dnn.W{j} = gpuArray(cast(hnn.W{j}));
             end
+        case 'b'
+            for j=1:numel(hnn.b)
+                dnn.b{j} = gpuArray(cast(hnn.b{j}));
+            end
+        
         case 'vW'
             for j=1:numel(hnn.vW)
                 dnn.vW{j} = gpuArray(cast(hnn.vW{j}));
+            end
+        case 'vb'
+            for j=1:numel(hnn.vb)
+                dnn.vb{j} = gpuArray(cast(hnn.vb{j}));
             end
         case 'p'
             for j=1:numel(hnn.p)
@@ -27,18 +36,21 @@ for i=1:numel(fld)
             for j=1:numel(hnn.a)
                 dnn.a{j} = gpuArray(cast(hnn.a{j}));
             end
+            
+       % profiling shows that the performance is bestif the following
+       % variables are left on the host
         case 'learningRate'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+            dnn.(fieldName) = cast(hnn.(fieldName));
         case 'weightPenaltyL2'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+            dnn.(fieldName) = cast(hnn.(fieldName));
         case 'dropoutFraction'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName))); 
+            dnn.(fieldName) = cast(hnn.(fieldName)); 
         case 'weightMaxL2norm'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));  
+            dnn.(fieldName) = cast(hnn.(fieldName));  
         case 'momentum'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+            dnn.(fieldName) = cast(hnn.(fieldName));
         case 'inputZeroMaskedFraction'
-            dnn.(fieldName) = gpuArray(cast(hnn.(fieldName)));
+            dnn.(fieldName) = cast(hnn.(fieldName));
         otherwise
             
             dnn.(fieldName) = hnn.(fieldName);
