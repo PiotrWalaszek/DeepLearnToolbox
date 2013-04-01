@@ -39,33 +39,32 @@ for i = 2 : n-1
     
 end
 
-inp = bsxfun(@plus,nn.a{n - 1} * nn.W{n - 1}',nn.b{n-1}');
-switch nn.output
-    case 'sigm'
-        nn.a{n} = sigm(inp);
-    case 'linear'
-        nn.a{n} = inp;
-    case 'softmax'
-       nn.a{n} = exp(bsxfun(@minus, inp, max(inp,[],2)));
-        nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
+z = bsxfun(@plus,nn.a{n - 1} * nn.W{n - 1}',nn.b{n-1}');
+  switch nn.output 
+        case 'sigm'
+            nn.a{n} = sigm(z);
+        case 'linear'
+            nn.a{n} = z;
+        case 'softmax'
+            
+            class_normalizer = log_sum_exp_over_cols(z);
+            log_class_prob = bsxfun(@minus,z,class_normalizer);
+            nn.a{n} = exp(log_class_prob);
+            %%%OLD CODE
+            %nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+            %nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
+            %nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
+    
+    end
+
+    %error and loss
+    nn.e = y - nn.a{n};
+    
+    switch nn.output
+        case {'sigm', 'linear'}
+            nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m; 
+        case 'softmax'
+            %nn.L = -sum(sum(y .* log(nn.a{n}))) / m; %OLD CODE
+            nn.L = -sum(sum(y.*log_class_prob)) / m;
+    end
 end
-
-%error and loss
-nn.e = y - nn.a{n};
-
-switch nn.output
-    case {'sigm', 'linear'}
-        nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m;
-    case 'softmax'
-        if ~strcmp(nn.activation_function,'ReLU')
-            loga = log(nn.a{n});
-            %nn.L = -sum(sum(y .* loga)) / m;
-            %clear la
-            nn.L = -sum(sum(y.*loga)) / m;
-        else
-            %not implemented
-        end
-end
-end
-
-
