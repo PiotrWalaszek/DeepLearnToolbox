@@ -12,8 +12,7 @@ gpu = gpuDevice();
 reset(gpu);
 wait(gpu);
 disp(['GPU memory available (Gb): ', num2str(gpu.FreeMemory / 10^9)]);
-cast = hnn.cast;
-caststr = hnn.caststr;
+cast = @single;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 m = size(htrain_x, 1);
 dloss.train.e               = [];
@@ -47,8 +46,8 @@ else
 end
 
 %variable momentum
-if isfield(nn, 'momentum_variable') && ~isempty(nn.momentum_variable)
-    if length(nn.momentum_variable) ~= opts.numepochs
+if isfield(hnn, 'momentum_variable') && ~isempty(hnn.momentum_variable)
+    if length(hnn.momentum_variable) ~= hnn.numepochs
         error('opts.momentum_variable must specify a momentum value for each epoch ie length(opts.momentum_variable) == opts.numepochs')
     end
     var_momentum_flag = 1;
@@ -57,8 +56,8 @@ else
 end
 
 %variable learningrate
-if isfield(nn, 'learningRate_variable') && ~isempty(nn.learningRate_variable)
-    if length(nn.learningRate_variable) ~= opts.numepochs
+if isfield(hnn, 'learningRate_variable') && ~isempty(hnn.learningRate_variable)
+    if length(hnn.learningRate_variable) ~= hnn.numepochs
         error('opts.learningRate_variable must specify a learninrate value for each epoch ie length(opts.learningRate_variable) == opts.numepochs')
     end
     var_learningRate_flag = 1;
@@ -66,11 +65,16 @@ else
     var_learningRate_flag = 0;
 end
 
-batchsize_single    = opts.batchsize;
-batchsize_group     = batchsize_single * opts.nbathesToLoad;
-numepochs           = opts.numepochs;
 
-numbatches = floor(m / batchsize_single);
+
+
+
+
+
+batchsize = opts.batchsize;
+numepochs = opts.numepochs;
+
+numbatches = floor(m / batchsize);
 
 %assert(rem(numbatches, 1) == 0, 'numbatches must be a integer');
 
@@ -87,56 +91,32 @@ for i = 1 : numepochs
     epochtime = (tic);
     %update momentum
     if var_momentum_flag
-        hnn.momentum = nn.momentum_variable(i);
+        hnn.momentum = hnn.momentum_variable(i);
+        dnn.momentum = hnn.momentum_variable(i);
     end
     %update learning rate
     if var_learningRate_flag
-        hnn.learningRate = nn.learningRate_variable(i);
+        hnn.learningRate = hnn.learningRate_variable(i);
+        dnn.learningRate = hnn.learningRate_variable(i);
     end
     
     kk = randperm(m);
     for l = 1 : numbatches
-        % in every opts.nbathesToLoad'th minibatch run load
-        % opts.nbathesToLoad minibatches to GPU
-        if mod(l, opts.nbathesToLoad) == 1 % every opts.nbathesToLoad'th batch load data
-            
-            hbatch_x_group = cast(extractminibatch(kk,l,batchsize_group,htrain_x));
-            hbatch_y_group = cast(extractminibatch(kk,l,batchsize_single,htrain_y))
-            %Add noise to input (for use in denoising autoencoder)
-            if(hnn.inputZeroMaskedFraction ~= 0)
-                hbatch_x = hbatch_x.*(gpuArray.rand(size(hbatch_x),caststr)>hnn.inputZeroMaskedFraction);
-            end
-            
-            dchunks = gpuArray(chunkify(hbatch_x_group,batchsize_single));
-            
-            
-            clear dbatch_x_group dbatch_y_group
-            % COPY BATCHES TO GPU DEVICE
-            dbatch_x_group = gpuArray(hbatch_x_group);
-            dbatch_y_group = gpuArray(hbatch_y_group);
-            
-            
-            % gcount iterate over batches that are loaded onto gpu
-            dgcount = gpuArray(1);
-        else
-            dgcount = dgcount +1;
+        
+        hbatch_x = extractminibatch(kk,l,batchsize,htrain_x);
+        
+        %Add noise to input (for use in denoising autoencoder)
+        if(hnn.inputZeroMaskedFraction ~= 0)
+            hbatch_x = hbatch_x.*(rand(size(hbatch_x))>hnn.inputZeroMaskedFraction);
         end
-            
         
         
-        
-        
+        % COPY BATCHES TO GPU DEVICE
+        dbatch_x = gpuArray(cast(hbatch_x));
+        dbatch_y = gpuArray(cast(extractminibatch(kk,l,batchsize,htrain_y)));
         
         % use gpu functions to train
-        
-        %find index of batch loaded to gpu
-        batchstart = dchunks(1,dgcount);
-        batchend   = dchunks(2,dgcount);
-        
-        dnn = nnff_gpu(dnn, ...
-            dbatch_x_group(batchstart:batchend,:) ,...
-            dbatch_y_group(batchstart:batchend,:)...
-            );
+        dnn = nnff_gpu(dnn, dbatch_x, dbatch_y);
         dnn = nnbp_gpu(dnn);
         dnn = nnapplygrads_gpu(dnn);
         L(n) = gather(dnn.L);
@@ -149,8 +129,11 @@ for i = 1 : numepochs
         
         evalt = tic;
         % copy netowrk to host and evalute performance
-
-        if i==1 % for first epoch copy training data chunk to GPU
+        
+        
+        %hnn = cpNNtoHost(dnn);
+        
+        if i==1
             %draws sample from training data
             sample = randsample(m,opts.ntrainforeval);
             dtrain_x = gpuArray(cast(htrain_x(sample,:)));
