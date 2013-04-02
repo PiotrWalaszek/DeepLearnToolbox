@@ -93,10 +93,12 @@ for i = 1 : numepochs
     %update momentum
     if var_momentum_flag
         hnn.momentum = opts.momentum_variable(i);
+        dnn.momentum = opts.momentum_variable(i);
     end
     %update learning rate
     if var_learningRate_flag
         hnn.learningRate = opts.learningRate_variable(i);
+        dnn.learningRate = opts.learningRate_variable(i);
     end
     
     kk = randperm(m);
