@@ -27,14 +27,17 @@ for i = 1 : (nn.n - 1)
     
     
     %Max L2 norm of incoming weights to individual neurons
-    
-    if nn.weightMaxL2norm > 0;
-        L2 = gpuArray(nn.weightMaxL2norm);
-        L2_norm_input = sum(nn.W{i}.^2,2);
-        norm_factor = sqrt(L2_norm_input/L2);
+      if nn.weightMaxL2norm > 0;
+        aa = nn.W{i} * nn.W{i}';
+        L2 = gpuArray(repmat(nn.weightMaxL2norm,nn.size(i+1)));
+        
+        L2_norm_input = diag(aa);
+        bb = L2_norm_input .* (L2^-1);
+        norm_factor = sqrt(bb);
         idx = norm_factor < 1;
         norm_factor(idx) = 1;
         nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);    
     end
+    
 end
 end
