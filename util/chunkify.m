@@ -1,18 +1,18 @@
 function chunks = chunkify(chunksize,data)
 %%CHUNKIFY extract minibatch index
-% return row indexes for chunks of a given size 
+% return row indexes for chunks of a given size
 [m,n] = size(data);
 numchunks =ceil( m / chunksize);
 batchstart = 1;
 batchend   = chunksize;
-
+chunks = zeros(2,numchunks);
 for i = 1:numchunks
-    if (batchend + chunksize) <= m
-       chunks{i}.start  = batchstart;
-       chunks{i}.end    = batchend;
+    if batchend <= m
+       chunks(1,i)  = batchstart;
+       chunks(2,i)  = batchend;
     else
-       chunks{i}.start  = batchstart;
-       chunks{i}.end    = m;
+       chunks(1,i)  = batchstart;
+       chunks(2,i)  = m;
     end
     batchstart = batchend +1;
     batchend   = batchstart + chunksize -1;
