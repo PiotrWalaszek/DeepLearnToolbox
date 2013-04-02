@@ -23,7 +23,7 @@ test_x = normalize(test_x, mu, sigma);
 %% ex1 vanilla neural net
 rng(0);
 nn = nnsetup([784 5 10]);
-nn.weightMaxL2norm                  = 30;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
+nn.weightMaxL2norm                  = 15;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
 opts = nnopts_setup;
 opts.learningRate_variable = [linspace(10,0.01,100)];
 opts.momentum_variable = [linspace(0.5,0.99,100)];

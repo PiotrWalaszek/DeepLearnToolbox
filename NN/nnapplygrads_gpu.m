@@ -29,14 +29,12 @@ for i = 1 : (nn.n - 1)
     %Max L2 norm of incoming weights to individual neurons
     
     if nn.weightMaxL2norm > 0;
-        l2 = gpuArray(nn.weightMaxL2norm);
-        %Get the L2 norm indput to the individual Neurons
+        L2 = gpuArray(nn.weightMaxL2norm);
         L2_norm_input = sum(nn.W{i}.^2,2);
-        for j = 1:nn.size(i+1) %loop through the neurons;
-            if L2_norm_input(j) > nn.weightMaxL2norm
-                nn.W{i} = nn.W{i}./sqrt(L2_norm_input/nn.weightMaxL2norm);
-            end
-        end
+        norm_factor = sqrt(L2_norm_input/L2);
+        idx = norm_factor < 1;
+        norm_factor(idx) = 1;
+        nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);    
     end
 end
 end

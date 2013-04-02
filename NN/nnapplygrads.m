@@ -30,13 +30,12 @@ function nn = nnapplygrads(nn)
                 
         %Max L2 norm of incoming weights to individual neurons
         if nn.weightMaxL2norm > 0;
-           %Get the L2 norm indput to the individual Neurons
-           L2_norm_input = sum(nn.W{i}.^2,2);
-           for j = 1:nn.size(i+1) %loop through the neurons;
-               if L2_norm_input(j) > nn.weightMaxL2norm
-                  nn.W{i}(j,:) = nn.W{i}(j,:)./sqrt(L2_norm_input(j)/nn.weightMaxL2norm);
-               end
-           end
+            L2 = nn.weightMaxL2norm;
+            L2_norm_input = sum(nn.W{i}.^2,2);
+            norm_factor = sqrt(L2_norm_input/L2);
+            idx = norm_factor < 1;
+            norm_factor(idx) = 1;
+            nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);    
         end
         
         
