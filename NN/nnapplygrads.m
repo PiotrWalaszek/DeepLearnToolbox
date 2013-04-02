@@ -31,11 +31,15 @@ function nn = nnapplygrads(nn)
         %Max L2 norm of incoming weights to individual neurons
         if nn.weightMaxL2norm > 0;
             L2 = nn.weightMaxL2norm;
-            L2_norm_input = sum(nn.W{i}.^2,2);
-            norm_factor = sqrt(L2_norm_input/L2);
+            %neruon inputs
+            z = sum(nn.W{i}.^2,2)+nn.b{i}.^2;
+            %normalization factor
+            norm_factor = sqrt(z/L2);
             idx = norm_factor < 1;
             norm_factor(idx) = 1;
-            nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);    
+            %rescale weights and biases
+            nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);
+            nn.b{i} = bsxfun(@rdivide,nn.b{i},norm_factor);
         end
         
         
