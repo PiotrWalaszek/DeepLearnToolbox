@@ -6,8 +6,8 @@ function nn = nnsetup(architecture)
     nn.size   = architecture;
     nn.n      = numel(nn.size);                         %number of layers
     nn.activation_function              = 'tanh_opt';   %  Activation functions of hidden layers: 'sigm' (sigmoid) or 'tanh_opt' (optimal tanh).
-    nn.learningRate                     = 2;            %  learning rate Note: typically needs to be lower when using 'sigm' activation function and non-normalized inputs.
-    nn.momentum                         = 0.5;          %  Momentum
+    nn.learningRate_variable            = [];           %  learning rate Note: user must set this to a row vector of  size 1 x numepochs
+    nn.momentum_variable                = [];             %  Momentum. User must set this to a vector row vector of size 1 x numepochs
     nn.weightPenaltyL2                  = 0;            %  L2 regularization
     nn.weightMaxL2norm                  = 0;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
     nn.nonSparsityPenalty               = 0;            %  Non sparsity penalty
@@ -18,8 +18,11 @@ function nn = nnsetup(architecture)
     nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
     nn.normalize_momentum               = 0;            %  do not use this for gpu does not work for some reason
     nn.errfun                           = [];           %  Empty for standard error options: @nnmatthew, @nnmatthew_gpu
-    nn.cast                             = @double;
-    nn.caststr                          = 'double';
+    nn.cast                             = @double;      % single | double precision
+    nn.caststr                          = 'double';     % single | double precision should be the same as nn.cast
+                                                        
+                                                                                                               
+                                                        
     for i = 2 : nn.n   
         % weights and weight momentum
         
