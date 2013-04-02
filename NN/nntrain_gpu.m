@@ -15,6 +15,7 @@ disp(['GPU memory available (Gb): ', num2str(gpu.FreeMemory / 10^9)]);
 cast = hnn.cast;
 caststr = hnn.caststr;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
+
 m = size(htrain_x, 1);
 dloss.train.e               = [];
 dloss.train.e_errfun        = [];
@@ -66,25 +67,12 @@ else
     var_learningRate_flag = 0;
 end
 
-
-
-
-
-
-
 batchsize = opts.batchsize;
 numepochs = opts.numepochs;
-
 numbatches = floor(m / batchsize);
-
-%assert(rem(numbatches, 1) == 0, 'numbatches must be a integer');
-
 L = zeros(numepochs*numbatches,1);
 n = 1;
-
-
-% COPY NETWORK TO DEVICE
-dnn = cpNNtoGPU(hnn,cast);
+dnn = cpNNtoGPU(hnn,cast);   % COPY NETWORK TO DEVICE
 
 
 
@@ -111,7 +99,6 @@ for i = 1 : numepochs
             hbatch_x = hbatch_x.*(gpuArray.rand(size(hbatch_x),caststr)>hnn.inputZeroMaskedFraction);
         end
         
-        
         % COPY BATCHES TO GPU DEVICE
         dbatch_x = gpuArray(cast(hbatch_x));
         dbatch_y = gpuArray(cast(extractminibatch(kk,l,batchsize,htrain_y)));
@@ -125,65 +112,52 @@ for i = 1 : numepochs
     end
     
     t = toc(epochtime);
-    
-    
+    evalt = tic;
+    if i==1
+        %draws sample from training data
+        sample = randsample(m,opts.ntrainforeval);
+        dtrain_x = gpuArray(cast(htrain_x(sample,:)));
+        dtrain_y = gpuArray(cast(htrain_y(sample,:)));
         
-        evalt = tic;
-        % copy netowrk to host and evalute performance
-        
-        
-        %hnn = cpNNtoHost(dnn);
-        
-        if i==1
-            %draws sample from training data
-            sample = randsample(m,opts.ntrainforeval);
-            dtrain_x = gpuArray(cast(htrain_x(sample,:)));
-            dtrain_y = gpuArray(cast(htrain_y(sample,:)));
-            
-            if opts.validation == 1
-                dval_x = gpuArray(hval_x);
-                dval_y = gpuArray(hval_y);
-            end
-        end
-        
-        
-        
-        %after each epoch update losses
         if opts.validation == 1
-            dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y, dval_x, dval_y);
-        else
-            dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y);
+            dval_x = gpuArray(hval_x);
+            dval_y = gpuArray(hval_y);
+        end
+    end   
+    
+    %after each epoch update losses
+    if opts.validation == 1
+        dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y, dval_x, dval_y);
+    else
+        dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y);
+    end
+       
+    % plot if figure is available
+    if ishandle(fhandle)
+        hloss = cpLossToHost(dloss,opts);
+        opts.plotfun([], fhandle, hloss, opts, i);
+        
+        
+        %save figure to the output folder after every 10 epochs
+        if save_nn_flag && mod(i,10) == 0
+            save_figure(fhandle,opts.outputfolder,2,[40 25],14);
+            disp(['Saved figure to: ' opts.outputfolder]);
         end
         
-        
-        
-        % plot if figure is available
-        if ishandle(fhandle)
-            hloss = cpLossToHost(dloss,opts);
-            opts.plotfun([], fhandle, hloss, opts, i);
-            
-                    
-            %save figure to the output folder after every 10 epochs
-            if save_nn_flag && mod(i,10) == 0
-                save_figure(fhandle,opts.outputfolder,2,[40 25],14);
-                disp(['Saved figure to: ' opts.outputfolder]);
-            end
-            
-        end
-        
-        t2 = toc(evalt);
-        disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
-            '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is '...
-            num2str(mean(L((n-numbatches):(n-1))))]) 
-        disp(['         Eval time: ' num2str(t2) ...
-            '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.momentum)...
-            '. free gpu mem (Gb): ', num2str(gpu.FreeMemory./10^9)]);
-        
+    end
+    
+    t2 = toc(evalt);
+    disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  ...
+        '. Took ' num2str(t) ' seconds' '. Mean squared error on training set is '...
+        num2str(mean(L((n-numbatches):(n-1))))])
+    disp(['         Eval time: ' num2str(t2) ...
+        '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.momentum)...
+        '. free gpu mem (Gb): ', num2str(gpu.FreeMemory./10^9)]);
+    
     %save model after every ten epochs if it is better than the previous
     %saved model
     if save_nn_flag && mod(i,10) == 0
-        corrfoeff = nnmatthew(hnn, hval_x, hval_y);
-        
+        corrfoeff = nnmatthew(hnn, hval_x, hval_y); 
         if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
             hloss = cpLossToHost(dloss,opts);
@@ -192,12 +166,10 @@ for i = 1 : numepochs
             corrfoeff_old = corrfoeff(1);
         end
     end
-    
 end
 
 % get network from gpu
 hnn = cpNNtoHost(dnn);
-
 
 %fetch error data from gpu
 hloss = cpLossToHost(dloss, opts);

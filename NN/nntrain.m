@@ -8,12 +8,12 @@ function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
+m = size(train_x,1);
 loss.train.e               = [];
 loss.train.e_errfun        = [];
 loss.val.e                 = [];
 loss.val.e_errfun          = [];
-
-corrfoeff_old = -999999999;
+corrfoeff_old              = -999999999;
 
 if nargin == 6
     opts.validation = 1;
@@ -58,16 +58,9 @@ else
     var_learningRate_flag = 0;
 end
 
-
-m = size(train_x, 1);
-
 batchsize = opts.batchsize;
 numepochs = opts.numepochs;
-
 numbatches = floor(m / batchsize);
-
-%assert(rem(numbatches, 1) == 0, 'numbatches must be a integer');
-
 L = zeros(numepochs*numbatches,1);
 n = 1;
 for i = 1 : numepochs
@@ -111,8 +104,6 @@ for i = 1 : numepochs
     else
         loss = nneval(nn, loss, train_x, train_y);
     end
-    
-
     
     % plot if figure is available
     if ishandle(fhandle)

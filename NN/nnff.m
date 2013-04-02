@@ -6,18 +6,20 @@ function nn = nnff(nn, x, y)
 n = nn.n;
 m = size(x, 1);
 nn.a{1} = x;
+cast = @nn.cast;
+cstr = nn.caststr;
 
 %feedforward pass
 for i = 2 : n-1
-    inp = nn.a{i - 1} * nn.W{i - 1}' + repmat(nn.b{i-1}',m,1);
+    z = bsxfun(@plus, nn.a{i - 1} * nn.W{i - 1}',nn.b{i-1}'); %input to each layer
     switch nn.activation_function
         case 'sigm'
             % Calculate the unit's outputs (including the bias term)
-            nn.a{i} = sigm(inp);
+            nn.a{i} = sigm(z);
         case 'tanh_opt'
-            nn.a{i} = tanh_opt(inp);
+            nn.a{i} = tanh_opt(z);
         case 'ReLU'  % linear rectified units max(0,x)
-            nn.a{i} = ReLU(inp);
+            nn.a{i} = ReLU(z);
     end
     
     %dropout hidden layers
@@ -38,16 +40,23 @@ for i = 2 : n-1
     
 end
 
-inp = nn.a{n - 1} * nn.W{n - 1}' + repmat(nn.b{n-1}',m,1);
+% Calculate output of NN
+z = bsxfun(@plus,nn.a{n - 1} * nn.W{n - 1}',nn.b{n-1}');
 switch nn.output
     case 'sigm'
-        nn.a{n} = sigm(inp);
+        nn.a{n} = sigm(z);
     case 'linear'
-        nn.a{n} = inp;
+        nn.a{n} = z;
     case 'softmax'
-        nn.a{n} = inp;
-        nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
-        nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
+        %numerically stable calc of softmax
+        class_normalizer = log_sum_exp_over_cols(z);
+        log_class_prob = bsxfun(@minus,z,class_normalizer);
+        nn.a{n} = exp(log_class_prob);
+        %%%OLD CODE
+        %nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+        %nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
+        %nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
+        
 end
 
 %error and loss
@@ -55,12 +64,9 @@ nn.e = y - nn.a{n};
 
 switch nn.output
     case {'sigm', 'linear'}
-        nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m;
+        nn.L = 1/2 * sum(sum(nn.e .^ 2)) / m; % MSE
     case 'softmax'
-        if ~strcmp(nn.activation_function,'ReLU')
-            nn.L = -sum(sum(y .* log(nn.a{n}))) / m;
-        else
-            %not implemented
-        end
+        %nn.L = -sum(sum(y .* log(nn.a{n}))) / m; %OLD CODE
+        nn.L = -sum(sum(y.*log_class_prob)) / m; %mean cross entropy
 end
 end

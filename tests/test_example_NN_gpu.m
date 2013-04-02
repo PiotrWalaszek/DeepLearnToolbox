@@ -17,21 +17,21 @@ test_x = normalize(test_x, mu, sigma);
 
 %% ex1 vanilla neural net
 rng(0);
-nn = nnsetup([784 1200 1200 1200 10]);
+nn = nnsetup([784 100 100 100 10]);
 nn.output = 'softmax';
 nn.activation_function = 'sigm';
 nn.normalize_input = 0;
 
 nn.dropoutFraction = 0.5;
 nn.inputZeroMaskedFraction = 0.2;
-%nn.weightPenaltyL2 = 1e-6;
-nn.weightMaxL2norm = 15;
-nn.cast = @double;
-nn.caststr = 'double';
-opts.numepochs =  1000;   %  Number of full sweeps through data
-opts.momentum_variable = [linspace(0.5,0.99,500) linspace(0.99,0.99,opts.numepochs-500)];
-opts.learningRate_variable =  10.*(linspace(0.998,0.998,opts.numepochs).^linspace(1,opts.numepochs,opts.numepochs));
-opts.learningRate_variable = opts.learningRate_variable.*opts.momentum_variable;
+nn.weightPenaltyL2 = 1e-6;
+%nn.weightMaxL2norm = 15;
+nn.cast                     = @double;
+nn.caststr                  = 'double';
+opts.numepochs              =  2;   %  Number of full sweeps through data
+opts.momentum_variable      = [linspace(0.5,0.99,1) linspace(0.99,0.99,1)];
+opts.learningRate_variable  =  10.*(linspace(0.998,0.998,1).^linspace(1,opts.numepochs,1));
+opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
 opts.plot = 1;
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
 opts.ntrainforeval = 5000; % number of training samples that are copied to the gpu and used to 
