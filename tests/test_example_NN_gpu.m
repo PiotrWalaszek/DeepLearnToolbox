@@ -28,25 +28,16 @@ nn.inputZeroMaskedFraction = 0.2;
 nn.weightMaxL2norm = 15;
 nn.cast = @double;
 nn.caststr = 'double';
-nn.momentum_variable = [linspace(0.5,0.99,500) linspace(0.99,0.99,opts.numepochs-500)];
-nn.learningRate_variable =  10.*(linspace(0.998,0.998,opts.numepochs).^linspace(1,opts.numepochs,opts.numepochs));
-nn.learningRate_variable = opts.learningRate_variable.*opts.momentum_variable;
-
 opts.numepochs =  1000;   %  Number of full sweeps through data
-
-opts.plot           = 1;
-opts.batchsize      = 100;  %  Take a mean gradient step over this many samples
-opts.ntrainforeval  = 5000; % number of training samples that are copied to the gpu and used to 
+opts.momentum_variable = [linspace(0.5,0.99,500) linspace(0.99,0.99,opts.numepochs-500)];
+opts.learningRate_variable =  10.*(linspace(0.998,0.998,opts.numepochs).^linspace(1,opts.numepochs,opts.numepochs));
+opts.learningRate_variable = opts.learningRate_variable.*opts.momentum_variable;
+opts.plot = 1;
+opts.batchsize = 100;  %  Take a mean gradient step over this many samples
+opts.ntrainforeval = 5000; % number of training samples that are copied to the gpu and used to 
                            % evalute training performance
                            % if you have a small dataset set this to number
                            % of samples in your training data
-
-opts.nbathesToLoad  = 50;   % GPU only. To minimize GPU host transfer bathces are loaded
-                            % onto the gpu in groups of opts.nbathesToLoad.
-                            % If you experice memory errors / use large  (above 5000)
-                            % batch size the performance penalty for
-                            % lowering opts.nbathesToLoad is low
-                           
 tt = tic;
                            [nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 toc(tt);

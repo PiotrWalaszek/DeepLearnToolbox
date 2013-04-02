@@ -96,8 +96,6 @@ for i = 1 : numepochs
     
     kk = randperm(m);
     for l = 1 : numbatches
-        
-        
         % in every opts.nbathesToLoad'th minibatch run load
         % opts.nbathesToLoad minibatches to GPU
         if mod(l, opts.nbathesToLoad) == 1 % every opts.nbathesToLoad'th batch load data
