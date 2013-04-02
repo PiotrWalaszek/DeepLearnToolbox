@@ -1,3 +1,4 @@
+
 addpath('../data');
 addpath('../util');
 addpath('../NN');
@@ -16,23 +17,23 @@ test_x = normalize(test_x, mu, sigma);
 
 %% ex1 vanilla neural net
 rng(0);
-nn = nnsetup([784 800 800 10]);
+nn = nnsetup([784 1200 1200 1200 10]);
 nn.output = 'softmax';
-nn.activation_function = 'tanh_opt';
+nn.activation_function = 'sigm';
 nn.normalize_input = 0;
 
-nn.dropoutFraction = 0.5;%
+nn.dropoutFraction = 0.5;
 nn.inputZeroMaskedFraction = 0.2;
 %nn.weightPenaltyL2 = 1e-6;
-nn.weightMaxL2norm = 60;
+nn.weightMaxL2norm = 15;
 nn.cast = @double;
 nn.caststr = 'double';
-fprintf('SINGLE PRECISION PERFORMANCE \n')
-opts.numepochs =  5;   %  Number of full sweeps through data
-opts.momentum_variable =1- linspace(0.99,0.99,opts.numepochs).^(linspace(1,700,opts.numepochs));
-opts.learningRate_variable =  0.25.*linspace(0.998,0.998,opts.numepochs).^linspace(1,1000,opts.numepochs);
+opts.numepochs =  1000;   %  Number of full sweeps through data
+opts.momentum_variable = [linspace(0.5,0.99,500) linspace(0.99,0.99,opts.numepochs-500)];
+opts.learningRate_variable =  10.*(linspace(0.998,0.998,opts.numepochs).^linspace(1,opts.numepochs,opts.numepochs));
+opts.learningRate_variable = opts.learningRate_variable.*opts.momentum_variable;
 opts.plot = 1;
-opts.batchsize = 1000;  %  Take a mean gradient step over this many samples
+opts.batchsize = 100;  %  Take a mean gradient step over this many samples
 opts.ntrainforeval = 5000; % number of training samples that are copied to the gpu and used to 
                            % evalute training performance
                            % if you have a small dataset set this to number
