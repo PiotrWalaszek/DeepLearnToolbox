@@ -4,6 +4,13 @@ function [mcc, bad] = nnmatthew(nn, x, y)
 %   for a n-class classification problem the function returns a n
 %   dimensional row vector.
 %   bad is notused, but returned for compability with rest of code. 
+
+if existsOnGPU(nn.W{1})
+    isGPU = 1;
+else
+    isGPU = 0;
+end
+
 bad = [];
 n_samples = size(x,1);
 n_output = size(y,2);
@@ -11,15 +18,20 @@ n_output = size(y,2);
 assert(n_output~=1,'Behavior of matthew correlation not tested with single output')
 
 % predict labels with network 
-pred = nnpredict(nn, x); 
+if isGPU
+    pred = nnpredict(nn,@nnff, x);
+else
+    pred = nnpredict(nn,@nnff_gpu, x);
+end
 
 % find correct targets
 [~, expected] = max(y,[],2);  
 
-% testing
-%expected = [1,2,1,1,2,3,4];
-%labels   = [1,2,1,1,2,3,2];
-mcc = zeros(1,n_output + 1);
+if isGPU
+    mcc = gpuArray(zeros(1,n_output));
+else
+    mcc = zeros(1,n_output);
+end
 TPt = 0; TNt = 0; FPt = 0; FNt = 0;
 for target_class = 1:n_output    % testing: set to four    
     
