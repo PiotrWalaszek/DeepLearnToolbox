@@ -4,23 +4,26 @@ function nn = nnapplygrads(nn)
 % weights and biases
 
 for i = 1 : (nn.n - 1)
+    
+    %add learning rate
+    db = nn.db{i} .* nn.learningRate;
+    dW = nn.dW{i} .* nn.learningRate;
+    
+    % add w2 penalty
     if(nn.weightPenaltyL2>0)
-        dW = nn.dW{i} + nn.weightPenaltyL2 * nn.W{i};
-        db = nn.learningRate * nn.db{i};
-    else
-        dW = nn.dW{i};
-        db = nn.learningRate * nn.db{i};
+        dW = dW + nn.weightPenaltyL2 * nn.W{i};        
     end
     
-    if(nn.momentum>0)  %apply momentum
-        nn.vW{i} = nn.momentum*nn.vW{i} + dW;
-        dW = nn.vW{i};
+     %apply momentum
+    if(nn.momentum>0) 
+        dW = dW + nn.momentum*nn.vW{i};   %add momentum
+        nn.vW{i} = dW;                    %save momentum 
         
-        nn.vb{i} = nn.momentum*nn.vb{i} + db;
-        db = nn.vb{i};       
+        db = db + nn.momentum*nn.vb{i};   %add bias momentum
+        nn.vb{i} = db;                    %save bias momentum
     end
     
-    %apply gradients
+    %Update weights
     nn.W{i} = nn.W{i} - dW;
     nn.b{i} = nn.b{i} - db;
     

@@ -106,7 +106,7 @@ for i = 1 : numepochs
         % use gpu functions to train
         dnn = nnff_gpu(dnn, dbatch_x, dbatch_y);
         dnn = nnbp_gpu(dnn);
-        dnn = nnapplygrads_gpu(dnn);
+        dnn = nnapplygrads(dnn);
         L(n) = gather(dnn.L);
         n = n + 1;
     end
