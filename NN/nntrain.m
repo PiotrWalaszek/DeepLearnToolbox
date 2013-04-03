@@ -141,6 +141,5 @@ for i = 1 : numepochs
     
 end
 
-nn = rmfield(nn,'isGPU');
 end
 
