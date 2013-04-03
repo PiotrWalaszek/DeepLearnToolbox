@@ -27,6 +27,8 @@ for i=1:numel(fld)
             for j=1:numel(dnn.p)
                 hnn.a{j} = gather(dnn.a{j});
             end
+        case 'isGPU'
+            hnn.(fieldName) = 0;
         otherwise
             hnn.(fieldName) = gather(dnn.(fieldName));
          

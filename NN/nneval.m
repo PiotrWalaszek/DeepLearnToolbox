@@ -1,7 +1,7 @@
 function [loss] = nneval(nn, loss,train_x, train_y, val_x, val_y)
 %NNEVAL evaluates performance of neural network
 % Returns a updated loss struct
-if existsOnGPU(nn.W{1})  % check if neural network is on gpu or not
+if nn.isGPU  % check if neural network is on gpu or not
     nnfeedforward = @nnff_gpu;
 else
     nnfeedforward = @nnff;

@@ -1,5 +1,5 @@
 function labels = nnpredict(nn, x)
-if existsOnGPU(nn.W{1})  % check if neural network is on gpu or not
+if nn.isGPU  % check if neural network is on gpu or not
     nnfeedforward = @nnff_gpu;
 else
     nnfeedforward = @nnff;

@@ -1,20 +1,15 @@
 clear all
 load mnist_uint8;
 
-tmp = randperm(length(train_x));
-idx_train = tmp(1:10000);
-idx_val = tmp(10001:11000);
-tmp = randperm(length(test_x));
-idx_test = tmp(1:1000);
-clear tmp
 
-val_x = double(train_x(idx_val,:)) / 255;
-train_x = double(train_x(idx_train,:)) / 255;
-test_x  = double(test_x(idx_test,:))  / 255;
 
-val_y = double(train_y(idx_val,:));
-train_y = double(train_y(idx_train,:));
-test_y  = double(test_y(idx_test,:));
+val_x = double(train_x) / 255;
+train_x = double(train_x) / 255;
+test_x  = double(test_x)  / 255;
+
+val_y = double(train_y);
+train_y = double(train_y);
+test_y  = double(test_y);
 
 % normalize
 [train_x, mu, sigma] = zscore(train_x);
@@ -106,15 +101,16 @@ tx = train_x(10001:end,:);
 vy   = train_y(1:10000,:);
 ty = train_y(10001:end,:);
 
+%%
 rng(0);
 nn.activation_function  = 'sigm';
 nn                      = nnsetup([784 200 10]);     
 nn.output               = 'softmax';                   %  use softmax output
 nn.errfun               = @nnmatthew;     
-nn.learningRate         = 0.1;
 nn.weightPenaltyL2      = 1e-4;
-
-
+opts.numepochs          = 30;  
+opts.learningRate_variable = ones(1,opts.numepochs);
+opts.momentum_variable     = 0.5*ones(1,opts.numepochs);
 %nn.dropoutFraction      = 0.5;
 opts.numepochs          = 30;                           %  Number of full sweeps through data
 opts.batchsize          = 1000;                        %  Take a mean gradient step over this many samples

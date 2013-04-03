@@ -51,6 +51,8 @@ for i=1:numel(fld)
             dnn.(fieldName) = cast(hnn.(fieldName));
         case 'inputZeroMaskedFraction'
             dnn.(fieldName) = cast(hnn.(fieldName));
+        case 'isGPU'
+            dnn.(fieldName) = 1;
         otherwise
             
             dnn.(fieldName) = hnn.(fieldName);

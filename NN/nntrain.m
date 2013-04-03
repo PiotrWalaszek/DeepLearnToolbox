@@ -8,7 +8,11 @@ function [nn, L,loss]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 assert(isfloat(train_x), 'train_x must be a float');
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
+
+nn.isGPU = 0; % tell code that variables are not on gpu
+
 m = size(train_x,1);
+assert(m ~= 0)
 loss.train.e               = [];
 loss.train.e_errfun        = [];
 loss.val.e                 = [];
@@ -136,5 +140,7 @@ for i = 1 : numepochs
     end
     
 end
+
+nn = rmfield(nn,'isGPU');
 end
 

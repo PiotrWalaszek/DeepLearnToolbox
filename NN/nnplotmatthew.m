@@ -10,7 +10,7 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
     %    plotting
     figure(fhandle); 
     
-    x_ax = 1:i;
+    x_ax = 1:i;     %create axis
     
     if opts.validation == 1
         subplot(n_rows,n_cols,1);

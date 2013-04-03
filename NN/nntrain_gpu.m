@@ -16,6 +16,10 @@ cast = hnn.cast;
 caststr = hnn.caststr;
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
+
+hnn.isGPU = 0; % tell code that variables are not on gpu (this is the HOSTnn)
+
+
 m = size(htrain_x, 1);
 dloss.train.e               = [];
 dloss.train.e_errfun        = [];
@@ -72,6 +76,7 @@ numepochs = opts.numepochs;
 numbatches = floor(m / batchsize);
 L = zeros(numepochs*numbatches,1);
 n = 1;
+              
 dnn = cpNNtoGPU(hnn,cast);   % COPY NETWORK TO DEVICE
 
 
