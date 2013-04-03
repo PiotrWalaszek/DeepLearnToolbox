@@ -127,9 +127,9 @@ for i = 1 : numepochs
     
     %after each epoch update losses
     if opts.validation == 1
-        dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y, dval_x, dval_y);
+        dloss = nneval(dnn, dloss, @nnff_gpu ,dtrain_x, dtrain_y, dval_x, dval_y);
     else
-        dloss = nneval_gpu(dnn, dloss, dtrain_x, dtrain_y);
+        dloss = nneval(dnn, dloss, @nnff_gpu ,dtrain_x, dtrain_y);
     end
        
     % plot if figure is available
