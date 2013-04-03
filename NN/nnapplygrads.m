@@ -11,8 +11,11 @@ for i = 1 : (nn.n - 1)
     
     % add w2 penalty
     if(nn.weightPenaltyL2>0)
-        dW = dW + nn.weightPenaltyL2 * nn.W{i};        
+        %Could be optimized ... (NOTE that there is a bug i Rasmus Bergs code here since wd is applied to both weights and bias')
+        dW = dW + nn.weightPenaltyL2 * nn.W{i}* nn.learningRate;        
     end
+
+    
     
      %apply momentum
     if(nn.momentum>0) 
