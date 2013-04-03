@@ -57,8 +57,60 @@ switch nn.output
         %nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
         %nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
         
+<<<<<<< HEAD
 end
 
+=======
+        switch nn.activation_function 
+            case 'sigm'
+                % Calculate the unit's outputs (including the bias term)
+                nn.a{i} = sigm(nn.a{i - 1} * nn.W{i - 1}');
+            case 'tanh_opt'
+                nn.a{i} = tanh_opt(nn.a{i - 1} * nn.W{i - 1}');
+            case 'ReLU'  % linear rectified units max(0,x) 
+                nn.a{i} = ReLU(nn.a{i - 1} * nn.W{i - 1}');
+        end
+        
+        %dropout hidden layers
+        if(nn.dropoutFraction > 0)
+            if(nn.testing)
+                nn.a{i} = nn.a{i}.*(1 - nn.dropoutFraction);
+            else
+                nn.dropOutMask{i} = (rand(size(nn.a{i}))>nn.dropoutFraction);
+                nn.a{i} = nn.a{i}.*nn.dropOutMask{i};
+            end
+        end
+              
+        
+        %calculate running exponential activations for use with sparsity
+        if(nn.nonSparsityPenalty>0)
+            nn.p{i} = 0.99 * nn.p{i} + 0.01 * mean(nn.a{i}, 1);
+        end
+        
+        %Add the bias term
+        nn.a{i} = [ones(m,1) nn.a{i}];
+    end
+
+z = nn.a{n - 1} * nn.W{n - 1}';
+switch nn.output 
+        case 'sigm'
+            nn.a{n} = arrayfun(@sigm, z);
+        case 'linear'
+            nn.a{n} = z;
+        case 'softmax'
+ %numerically stable calc of softmax
+        class_normalizer = log_sum_exp_over_cols(z);
+        log_class_prob = bsxfun(@minus,z,class_normalizer);
+        nn.a{n} = exp(log_class_prob);
+        %%%OLD CODE
+        %nn.a{n} = nn.a{n - 1} * nn.W{n - 1}';
+        %nn.a{n} = exp(bsxfun(@minus, nn.a{n}, max(nn.a{n},[],2)));
+        %nn.a{n} = bsxfun(@rdivide, nn.a{n}, sum(nn.a{n}, 2));
+        
+end
+
+
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 %error and loss
 nn.e = y - nn.a{n};
 

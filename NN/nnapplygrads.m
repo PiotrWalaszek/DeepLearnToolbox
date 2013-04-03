@@ -5,6 +5,7 @@ function nn = nnapplygrads(nn)
 
 for i = 1 : (nn.n - 1)
     
+<<<<<<< HEAD
     %add learning rate
     db = nn.db{i} .* nn.learningRate;
     dW = nn.dW{i} .* nn.learningRate;
@@ -21,6 +22,37 @@ for i = 1 : (nn.n - 1)
     if(nn.momentum>0) 
         dW = dW + nn.momentum*nn.vW{i};   %add momentum
         nn.vW{i} = dW;                    %save momentum 
+=======
+    for i = 1 : (nn.n - 1)
+        if(nn.weightPenaltyL2>0)
+            dW = nn.dW{i} + nn.weightPenaltyL2 * nn.W{i};
+        else
+            dW = nn.dW{i};
+        end
+        
+        dW = nn.learningRate * dW;
+        
+        if(nn.momentum>0)
+            nn.vW{i} = nn.momentum*nn.vW{i} + dW;
+            dW = nn.vW{i};
+        end
+            
+        nn.W{i} = nn.W{i} - dW;
+        
+        %Max L2 norm of incoming weights to individual neurons
+        %Max L2 norm of incoming weights to individual neurons
+        if nn.weightMaxL2norm > 0;
+        L2 = nn.weightMaxL2norm;
+        %neruon inputs
+        z = sum(nn.W{i}.^2,2);
+        %normalization factor
+        norm_factor = sqrt(z/L2);
+        idx = norm_factor < 1;
+        norm_factor(idx) = 1;
+        %rescale weights and biases
+        nn.W{i} = bsxfun(@rdivide,nn.W{i},norm_factor);
+        
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
         
         db = db + nn.momentum*nn.vb{i};   %add bias momentum
         nn.vb{i} = db;                    %save bias momentum

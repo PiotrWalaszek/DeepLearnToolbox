@@ -13,7 +13,10 @@ reset(gpu);
 wait(gpu);
 disp(['GPU memory available (Gb): ', num2str(gpu.FreeMemory / 10^9)]);
 cast = hnn.cast;
+<<<<<<< HEAD
 caststr = hnn.caststr;
+=======
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
 
 

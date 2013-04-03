@@ -11,6 +11,7 @@ cstr = nn.caststr;
 %feedforward pass
 for i = 2 : n-1
     
+<<<<<<< HEAD
     %calculate activation of each layer, except output layer
     z = bsxfun(@plus, nn.a{i - 1} * nn.W{i - 1}',nn.b{i-1}'); %input to each layer
     switch nn.activation_function
@@ -50,6 +51,50 @@ switch nn.output
         nn.a{n} = z;
     case 'softmax'
         %numerically stable calc of softmax
+=======
+    x = [ones(m,1) x];
+    nn.a{1} = x;
+
+    %feedforward pass
+    for i = 2 : n-1
+        switch nn.activation_function 
+            case 'sigm'
+                % Calculate the unit's outputs (including the bias term)
+                nn.a{i} = arrayfun(@sigm,nn.a{i - 1} * nn.W{i - 1}');
+            case 'tanh_opt'
+                nn.a{i} = arrayfun(@tanh_opt,nn.a{i - 1} * nn.W{i - 1}');
+            case 'ReLU'  % linear rectified units max(0,x) 
+                nn.a{i} = arrayfun(@ReLU,nn.a{i - 1} * nn.W{i - 1}');
+        end
+        
+        %dropout
+        if(nn.dropoutFraction > 0)
+            if(nn.testing)
+                nn.a{i} = nn.a{i}.*(1 - nn.dropoutFraction);
+            else
+                nn.dropOutMask{i} = (gpuArray.rand(size(nn.a{i}))>nn.dropoutFraction);
+                nn.a{i} = nn.a{i}.*nn.dropOutMask{i};
+            end
+        end
+        
+        %calculate running exponential activations for use with sparsity
+        if(nn.nonSparsityPenalty>0)
+            nn.p{i} = 0.99 * nn.p{i} + 0.01 * mean(nn.a{i}, 1);
+        end
+        
+        %Add the bias term
+        nn.a{i} = [gpuArray.ones(m,1) nn.a{i}];
+    end
+   
+z = nn.a{n - 1} * nn.W{n - 1}';
+switch nn.output 
+        case 'sigm'
+            nn.a{n} = arrayfun(@sigm, z);
+        case 'linear'
+            nn.a{n} = z;
+        case 'softmax'
+ %numerically stable calc of softmax
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
         class_normalizer = log_sum_exp_over_cols(z);
         log_class_prob = bsxfun(@minus,z,class_normalizer);
         nn.a{n} = exp(log_class_prob);
@@ -71,3 +116,8 @@ switch nn.output
         nn.L = -sum(sum(y.*log_class_prob)) / m; %mean cross entropy
 end
 end
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97

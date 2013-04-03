@@ -22,6 +22,11 @@ function nn = nnsetup(architecture)
     nn.caststr                          = 'double';
     for i = 2 : nn.n   
         % weights and weight momentum
+<<<<<<< HEAD
+=======
+        nn.W{i - 1} =(rand(nn.size(i), nn.size(i - 1)+1) - 0.5) * 2 * 4 * sqrt((6 / (nn.size(i) + nn.size(i - 1)));
+        nn.vW{i - 1} = zeros(size(nn.W{i - 1}));
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
         
         %nn.W{i - 1} =(rand(nn.size(i), nn.size(i - 1)) - 0.5) * 2 * 4 * sqrt(6 / (nn.size(i) + nn.size(i - 1)));
         %nn.b{i - 1} = (rand(nn.size(i),1)-0.5) * 2 * 4 * sqrt(6 / (nn.size(i) + 1)); 

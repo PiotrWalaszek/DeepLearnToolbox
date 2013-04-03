@@ -17,13 +17,18 @@ test_x = normalize(test_x, mu, sigma);
 
 %% ex1 vanilla neural net
 rng(0);
+<<<<<<< HEAD
 nn = nnsetup([784 1200 1200 1200 10]);
+=======
+nn = nnsetup([784 100 100 100 10]);
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 nn.output = 'softmax';
 nn.activation_function = 'sigm';
 nn.normalize_input = 0;
 
 nn.dropoutFraction = 0.5;
 nn.inputZeroMaskedFraction = 0.2;
+<<<<<<< HEAD
 %nn.weightPenaltyL2 = 1e-6;
 nn.weightMaxL2norm = 15;
 nn.cast                     = @double;
@@ -45,19 +50,47 @@ tt = tic;
 toc(tt);
 %[nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
 
+=======
+nn.weightPenaltyL2 = 1e-6;
+%nn.weightMaxL2norm = 15;
+nn.cast                     = @double;
+nn.caststr                  = 'double';
+opts.numepochs              =  2;   %  Number of full sweeps through data
+opts.momentum_variable      = [linspace(0.5,0.99,1) linspace(0.99,0.99,1)];
+opts.learningRate_variable  =  1.*(linspace(0.998,0.998,2).^linspace(1,2000,2));
+opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
+opts.plot = 1;
+opts.batchsize = 100;  %  Take a mean gradient step over this many samples
+opts.ntrainforeval = 5000; % number of training samples that are copied to the gpu and used to 
+                           % evalute training performance
+                           % if you have a small dataset set this to number
+                           % of samples in your training data
+tt = tic;
+                           [nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
+toc(tt);
+                           %[nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 [er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
 %[er_cpu, bad] = nntest(nn_cpu, test_x, test_y);
 fprintf('Error GPU (single): %f \n',er_gpu);
 %fprintf('Error GPU (single); %f \n',er_cpu);
 
+<<<<<<< HEAD
 %
 % load mnist_uint8;
 % cast = @double;
 %
+=======
+% 
+% load mnist_uint8;
+% cast = @double;
+% 
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 % train_x = cast(train_x) / 255;
 % test_x  = cast(test_x)  / 255;
 % train_y = cast(train_y);
 % test_y  = cast(test_y);
+<<<<<<< HEAD
 %
 % % normalize
 % [train_x, mu, sigma] = zscore(train_x);
@@ -67,6 +100,17 @@ fprintf('Error GPU (single): %f \n',er_gpu);
 % rng(0);
 % nn = nnsetup([784 200 10]);
 %
+=======
+% 
+% % normalize
+% [train_x, mu, sigma] = zscore(train_x);
+% test_x = normalize(test_x, mu, sigma);
+% 
+% %% ex1 vanilla neural net
+% rng(0);
+% nn = nnsetup([784 200 10]);
+% 
+>>>>>>> 2bce7f66b4140763c0902f17af427b5e56a70e97
 % fprintf('DOUBLE PRECISION PERFORMANCE \n')
 % %[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 % [nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
