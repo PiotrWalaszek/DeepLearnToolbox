@@ -1,8 +1,14 @@
-function labels = nnpredict(nn,nnff, x)
-    nn.testing = 1;
-    nn = nnff(nn, x, zeros(size(x,1), nn.size(end)));
-    nn.testing = 0;
-    
-    [~, i] = max(nn.a{end},[],2);
-    labels = i;
+function labels = nnpredict(nn, x)
+if existsOnGPU(nn.W{1})  % check if neural network is on gpu or not
+    nnfeedforward = @nnff_gpu;
+else
+    nnfeedforward = @nnff;
+end
+
+nn.testing = 1;
+nn = nnfeedforward(nn, x, zeros(size(x,1), nn.size(end)));
+nn.testing = 0;
+
+[~, i] = max(nn.a{end},[],2);
+labels = i;
 end

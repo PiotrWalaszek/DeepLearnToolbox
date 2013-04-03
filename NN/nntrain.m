@@ -100,9 +100,9 @@ for i = 1 : numepochs
     evalt = tic;
     %after each epoch update losses
     if opts.validation == 1
-        loss = nneval(nn, loss, @nnff,train_x, train_y, val_x, val_y);
+        loss = nneval(nn, loss,train_x, train_y, val_x, val_y);
     else
-        loss = nneval(nn, loss, @nnff,train_x, train_y);
+        loss = nneval(nn, loss,train_x, train_y);
     end
     
     % plot if figure is available
