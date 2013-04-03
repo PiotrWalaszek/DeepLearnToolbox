@@ -1,4 +1,4 @@
-function labels = nnpredict(nn, x)
+function labels = nnpredict(nn,nnff, x)
     nn.testing = 1;
     nn = nnff(nn, x, zeros(size(x,1), nn.size(end)));
     nn.testing = 0;
