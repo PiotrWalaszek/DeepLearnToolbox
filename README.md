@@ -1,3 +1,4 @@
-
-Work in progress!  DeepLearnToolbox
+DeepLearnToolbox
 ================
+
+Not compatible with original DeepLearnToolbox
