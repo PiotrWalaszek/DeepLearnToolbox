@@ -42,7 +42,7 @@ tt = tic;
                            [nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 toc(tt);
                            %[nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);
-[er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
+[er_gpu, bad] = nntest(nn_gpu,@nnff, test_x, test_y);
 %[er_cpu, bad] = nntest(nn_cpu, test_x, test_y);
 fprintf('Error GPU (single): %f \n',er_gpu);
 %fprintf('Error GPU (single); %f \n',er_cpu);
