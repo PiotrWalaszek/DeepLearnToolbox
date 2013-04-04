@@ -159,8 +159,7 @@ for i = 1 : numepochs
         '. LearningRate: ', num2str(hnn.learningRate) '.Momentum : ' num2str(hnn.momentum)...
         '. free gpu mem (Gb): ', num2str(gpu.FreeMemory./10^9)]);
     
-    %save model after every ten epochs if it is better than the previous
-    %saved model
+    %save model after every 100 epochs
     if save_nn_flag && mod(i,10) == 0
             epoch_nr = i;
             hloss = cpLossToHost(dloss,opts);
