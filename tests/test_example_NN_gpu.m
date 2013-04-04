@@ -28,12 +28,15 @@ nn.inputZeroMaskedFraction = 0.2;
 nn.weightMaxL2norm = 15;
 nn.cast                     = @double;
 nn.caststr                  = 'double';
-opts.numepochs              =  3000;   %  Number of full sweeps through data
+nn.errfun    = @nntest;
+
+opts.plotfun = @nnplottest;
+opts.numepochs              =  5000;   %  Number of full sweeps through data
 opts.momentum_variable      = [linspace(0.5,0.99,1500 ) linspace(0.99,0.99,opts.numepochs -1500)];
-opts.learningRate_variable  =  10.*(linspace(0.998,0.998,opts.numepochs ).^linspace(1,opts.numepochs,opts.numepochs ));
+opts.learningRate_variable  =  8.*(linspace(0.998,0.998,opts.numepochs ).^linspace(1,opts.numepochs,opts.numepochs ));
 opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
 opts.plot                   = 1;
-opts.batchsize              = 100;  %  Take a mean gradient step over this many samples
+opts.batchsize              = 1000;  %  Take a mean gradient step over this many samples
 opts.ntrainforeval          = 5000; % number of training samples that are copied to the gpu and used to
 % evalute training performance
 % if you have a small dataset set this to number
@@ -47,7 +50,7 @@ toc(tt);
 
 [er_gpu, bad] = nntest(nn_gpu, test_x, test_y);
 %[er_cpu, bad] = nntest(nn_cpu, test_x, test_y);
-fprintf('Error GPU (single): %f \n',er_gpu);
+fprintf('Error: %f \n',er_gpu);
 %fprintf('Error GPU (single); %f \n',er_cpu);
 
 %
