@@ -42,7 +42,7 @@ nn.cast                     = @double;
 nn.caststr                  = 'double';
 
 nn.errfun                   = @nnsigp;  %  sets the error function that is run after each iteration
-opts.numepochs              =  3;      %  Number of full sweeps through data
+opts.numepochs              =  7;      %  Number of full sweeps through data
 opts.momentum_variable      = [linspace(0.5,0.99,opts.numepochs)];
 opts.learningRate_variable  =  2.*(linspace(0.998,0.5,opts.numepochs ));
 opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
@@ -50,7 +50,7 @@ opts.plot                   = 1;
 opts.batchsize              = 1000;         %  Take a mean gradient step over this many samples
 opts.ntrainforeval          = 5000;         % only GPU:  number of training samples that are copied to the gpu and used to
 opts.plotfun                = @nnplotsigp;  % sets the plotting function
-
+opts.outputfolder           = 'nns/hinton';
 % load a trained network  - Same settings as above
 
 tt = tic;

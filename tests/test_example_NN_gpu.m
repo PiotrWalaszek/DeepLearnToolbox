@@ -38,6 +38,7 @@ opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable
 opts.plot                   = 1;
 opts.batchsize              = 1000;  %  Take a mean gradient step over this many samples
 opts.ntrainforeval          = 5000; % number of training samples that are copied to the gpu and used to
+opts.outputfolder           = 'nns/hinton';
 % evalute training performance
 % if you have a small dataset set this to number
 % opts.plotfun = @nnplotmatthew;
