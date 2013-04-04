@@ -44,28 +44,29 @@ for target_class = 1:n_output    % testing: set to four
     FNt = FNt + FN;
     
     mcc(n_output+1) = (TP * TN - FP * FN) ./ sqrt((TP+FP) * (TP+FN) * (TN+FP) * (TN + FN));
-    %   testing
-    %     disp([target_class,MCC])
-    %     disp([pred_class;
-    %     true_class])
 end
 
 
     function [TP,TN,FP,FN,MCC] =  matthew_calc(pred_class,true_class)
+        %                preduction
+        %  ____________________________
+        %             |   pos     neg
+        %   __________|_________________
+        %   true | pos| 1,1 TP | 1,2 FN
+        %   clas | neg| 2,1 FP | 2,2 TN
+        
         positives = 0;  % definition for readability
         negatives = 1;  % definition for readability
+        
         % http://en.wikipedia.org/wiki/Confusion_matrix
-        % read this as First parentesis: ~=  -> false, == -> true 
+        % read this as First parentesis: ~=  -> false, == -> true
         % second parentesis: positives / negatives
-        % example (~=)   and (...== negatives) = false negatives 
+        % example (~=)   and (...== negatives) = false negatives
         TP = sum( (pred_class == true_class) .* (true_class == positives) ); %True positive
         TN = sum( (pred_class == true_class) .* (true_class == negatives) ); %True negative
         FN = sum( (pred_class ~= true_class) .* (pred_class == negatives) ); %False negatives
         FP = sum( (pred_class ~= true_class) .* (pred_class == positives) ); %False positives
         
-        
-        %         [~,x2] = chisquarecont(contab);
-        %         MCC = abs(sqrt(x2./ n_samples));
         mcc_denom = (TP+FP) * (TP+FN) * (TN+FP) * (TN + FN);
         
         % make sure denominator is not zero, wiki says set to 1
@@ -75,7 +76,7 @@ end
         MCC = (TP * TN - FP * FN) ./ sqrt(mcc_denom);
         
         
-        contab = [TP,FP,FN,TP];
+        contab = [TP,FN,FP,TP];
         if any(contab < 5) || sum(contab) < 20
             MCC = 0;   %MCC is ill defined for small numbers ???
         end

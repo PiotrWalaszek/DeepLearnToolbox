@@ -48,12 +48,20 @@ for target_class = 1:n_output    % testing: set to four
     pred_class = ~(pred     == target_class);
     true_class = ~(expected == target_class);
     
+    
+    %                preduction
+    %  ____________________________
+    %             |   pos     neg
+    %   __________|_________________ 
+    %   true | pos| 1,1 TP | 1,2 FN
+    %   clas | neg| 2,1 FP | 2,2 TN
     [TP,TN,FP,FN ] =  calcconfusion(pred_class,true_class);
-    confusionmat(:,:,target_class) = [TP FP; FN TN];
+    confusionmat(:,:,target_class) = [TP FN; FP TN];
     
     
 end
 
+% fill out errors 
 err(1) = matthew(confusionmat(:,:,1));       % 1) signalpeptide(1) MCC
 err(2) = specificity(confusionmat(:,:,2));   % 2) Cleavage site(2) specificity
 err(3) = specificity(confusionmat(:,:,2));   % 3) Cleavage site(2) precision
@@ -61,22 +69,24 @@ err(4) = specificity(confusionmat(:,:,2));   % 4) Cleavage site(2) MCC
 err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
 
 
-
-
     function [TP,TN,FP,FN ] =  calcconfusion(pred_class,true_class)
-        TP = sum( (pred_class == true_class) .* (true_class == 0) ); %True positive
-        TN = sum( (pred_class == true_class) .* (true_class == 1) ); %True negative
-        FP = sum( (pred_class ~= true_class) .* (pred_class == 1) ); %False positive
-        FN = sum( (pred_class ~= true_class) .* (pred_class == 0) ); %False negative
+        positives = 0;  % definition for readability
+        negatives = 1;  % definition for readability
+        % http://en.wikipedia.org/wiki/Confusion_matrix
+        % read this as First parentesis: ~=  -> false, == -> true 
+        % second parentesis: positives / negatives
+        % example (~=)   and (...== negatives) = false negatives 
+        TP = sum( (pred_class == true_class) .* (true_class == positives) ); %True positive
+        TN = sum( (pred_class == true_class) .* (true_class == negatives) ); %True negative
+        FN = sum( (pred_class ~= true_class) .* (pred_class == negatives) ); %False negatives
+        FP = sum( (pred_class ~= true_class) .* (pred_class == positives) ); %False positives
         
     end
 
     function prec = precision(confusion)
-        %calculate precision
+        % http://en.wikipedia.org/wiki/Accuracy_and_precision
         tp   = confusion(1,1);
-        fp   = confusion(1,2);
-        %fn   = conconfusion(2,1);
-        %tn   = conconfusion(2,2);
+        fp   = confusion(2,1);
         prec = tp / (tp + fp);
         if (tp + fp) ==0
             prec = 0;
@@ -84,25 +94,23 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
     end
 
     function spec = specificity(confusion)
-        % calculates specifity
-        fp   = confusion(1,2);
-        %fn   = conconfusion(2,1);
+        % http://en.wikipedia.org/wiki/Sensitivity_and_specificity
+        fp   = confusion(2,1);
         tn   = confusion(2,2);
         spec = tn / (fp + tn);
         if (fp+tn) ==0
             spec = 0;
-        end
-        
-        
+        end        
     end
+
     function mcc =  matthew(confusion)
+        % http://en.wikipedia.org/wiki/Matthews_correlation_coefficient  
         % claculates matthew correlation
         tp = confusion(1,1);
-        fp = confusion(1,2);
-        fn = confusion(2,1);
+        fn = confusion(1,2);
+        fp = confusion(2,1);
         tn = confusion(2,2);
-        
-        
+              
         %check if mcc denominator is belew zero, set to 1 if so
         mcc_denom = (tp+fp) * (tp+fn) * (tn+fp) * (tn + fn);
         if mcc_denom == 0
