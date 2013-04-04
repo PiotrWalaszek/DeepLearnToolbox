@@ -66,7 +66,11 @@ opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable
 opts.plot                   = 1;            % 0 = no plotting, migth speed up calc if epochs run fast
 opts.batchsize              = 1000;         % Take a mean gradient step over this many samples. GPU note: below 500 is slow on GPU because of memory transfer
 opts.ntrainforeval          = 5000;         % number of training samples that are copied to the gpu and used to evalute training performance
-opts.outputfolder           = 'nns/hinton'; % saves network each 100 epochs and figures after 10. hinton is prefix to the files
+opts.outputfolder           = 'nns/hinton'; % saves network each 100 epochs and figures after 10. hinton is prefix to the files. 
+                                            % nns is the name of a folder
+                                            % from where this script is
+                                            % called (probably tests/nns)
+                                        
 
 tt = tic;
 [nn,L,loss]                 = nntrain_gpu(nn, train_x, train_y, opts,test_x,test_y); %use nntrain to train on cpu
