@@ -64,9 +64,9 @@ end
 % fill out errors 
 err(1) = matthew(confusionmat(:,:,1));       % 1) signalpeptide(1) MCC
 err(2) = specificity(confusionmat(:,:,2));   % 2) Cleavage site(2) specificity
-err(3) = specificity(confusionmat(:,:,2));   % 3) Cleavage site(2) precision
-err(4) = specificity(confusionmat(:,:,2));   % 4) Cleavage site(2) MCC
-err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
+err(3) = precision(confusionmat(:,:,2));   % 3) Cleavage site(2) precision
+err(4) = matthew(confusionmat(:,:,2));   % 4) Cleavage site(2) MCC
+err(5) = matthew(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
 
 
     function [TP,TN,FP,FN ] =  calcconfusion(pred_class,true_class)
