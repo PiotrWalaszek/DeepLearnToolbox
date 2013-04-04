@@ -42,7 +42,7 @@ nn.cast                     = @double;
 nn.caststr                  = 'double';
 
 nn.errfun                   = @nnsigp;  %  sets the error function that is run after each iteration
-opts.numepochs              =  15;      %  Number of full sweeps through data
+opts.numepochs              =  3;      %  Number of full sweeps through data
 opts.momentum_variable      = [linspace(0.5,0.99,opts.numepochs)];
 opts.learningRate_variable  =  2.*(linspace(0.998,0.5,opts.numepochs ));
 opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
@@ -54,10 +54,20 @@ opts.plotfun                = @nnplotsigp;  % sets the plotting function
 % load a trained network  - Same settings as above
 
 tt = tic;
-[nn,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
 if gpu == 1
-[nn,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
 end
+
+opts.plotfun = @nnplotmatthew;
+nn.errfun    = @nnmatthew;
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+if gpu == 1
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
+end
+
+
+
 %[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts); % GPU
 toc(tt);
 %[nn_cpu,L,loss] = nntrain(nn, train_x, train_y, opts);

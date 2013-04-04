@@ -4,8 +4,10 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
 % @matthew.
 
 %
-%  TODO check indexing of plots - PROBABLY A BUG
-    nplots = size(L.train.e_errfun,2) + 1;
+
+    nclassplots = size(L.train.e_errfun,2);
+    nplots = nclassplots + 1;
+    
     n_cols = 4.0;
     n_rows = ceil(nplots / n_cols);
     
@@ -16,6 +18,8 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
     x_ax = 1:i;     %create axis
     
     if opts.validation == 1
+        
+        % tranining error plot
         subplot(n_rows,n_cols,1);
         p = plot(x_ax, L.train.e, 'b', ...
                  x_ax, L.val.e, 'r');
@@ -23,47 +27,54 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
         xlabel('Number of epochs'); ylabel('Error');title('Error');    
         set(gca, 'Xlim',[0,opts.numepochs + 1])
         %create subplots of correlations
-        for b = 1:nplots-1
+        
+        for b = 1:nclassplots-1
             subplot(n_rows,n_cols,b+1);
             p = plot(x_ax, L.train.e_errfun(:,b), 'b', ...
                      x_ax, L.val.e_errfun(:,b),   'm');
-            ylabel('MCC'); xlabel('Epoch'); 
             
-            if b+1 ==nplots
-                title(sprintf('Matthew correlation: ALL CLASSES',b))
-            legend(p, {'Training', 'Validation'},'Location','Best');
-            set(gca, 'Xlim',[0,opts.numepochs + 1])
-            else
+            
             title(sprintf('Matthew correlation: Class %i',b))
             legend(p, {'Training', 'Validation'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
-            end
         end
+            
+        %plot total MCC
+            subplot(n_rows,n_cols,nplots);
+            p = plot(x_ax, L.train.e_errfun(:,nclassplots), 'b', ...
+                     x_ax, L.val.e_errfun(:,nclassplots),   'm');
+            ylabel('MCC'); xlabel('Epoch'); 
+            title(sprintf('Matthew correlation: ALL CLASSES'))
+            legend(p, {'Training', 'Validation'},'Location','Best');
+            set(gca, 'Xlim',[0,opts.numepochs + 1])  
         
-    else
+        
+    else  % no validation
         subplot(n_rows,n_cols,1);
         p = plot(x_ax,L.train.e,'b');
         legend(p, {'Training'},'Location','NorthEast');
         xlabel('Number of epochs'); ylabel('Error');title('Error');    
         set(gca, 'Xlim',[0,opts.numepochs + 1])
         
-        for b = 1:nplots-1
+        for b = 1:nclassplots-1
             
             
             
             subplot(n_rows,n_cols,b+1);
             p = plot(x_ax, L.train.e_errfun(:,b), 'b');
             ylabel('MCC'); xlabel('Epoch'); 
-            if b+1 ==nplots
-                title(sprintf('Matthew correlation: ALL CLASSES',b))
-            legend(p, {'Training'},'Location','Best');
-            set(gca, 'Xlim',[0,opts.numepochs + 1])
-            else
             title(sprintf('Matthew correlation: Class %i',b))
             legend(p, {'Training'},'Location','Best');
             set(gca, 'Xlim',[0,opts.numepochs + 1])
-            end
+            
         end
+        % plot total mcc
+            subplot(n_rows,n_cols,nplots);
+            p = plot(x_ax, L.train.e_errfun(:,nclassplots), 'b');
+            ylabel('MCC'); xlabel('Epoch'); 
+            title(sprintf('Matthew correlation: ALL CLASSES'))
+            legend(p, {'Training'},'Location','Best');
+            set(gca, 'Xlim',[0,opts.numepochs + 1])
         
     end    
     
