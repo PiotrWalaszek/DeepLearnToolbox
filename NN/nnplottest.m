@@ -14,7 +14,7 @@ if opts.validation == 1
     
     % tranining error plot
     subplot(1,2,1);
-    p = plot(x_ax, L.train.e, 'b', ...
+    p = semilogy(x_ax, L.train.e, 'b', ...
         x_ax, L.val.e, 'r');
     legend(p, {'Training', 'Validation'},'Location','NorthEast');
     xlabel('Number of epochs'); ylabel('Error');title('Training Error');
@@ -34,7 +34,7 @@ if opts.validation == 1
 else  % no validation
     subplot(1,2,1);
     title('Training Errors')
-    p = plot(x_ax,L.train.e,'b');
+    p = semilogy(x_ax,L.train.e,'b');
     legend(p, {'Training'},'Location','NorthEast');
     xlabel('Number of epochs'); ylabel('Error');title('Training Error');
     set(gca, 'Xlim',[0,opts.numepochs + 1])

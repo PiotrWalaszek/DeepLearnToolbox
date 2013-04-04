@@ -6,11 +6,11 @@ function nnupdatefigures(nn,fhandle,L,opts,i)
     figure(fhandle); 
     x_ax = 1:i;
     if opts.validation == 1 
-        p = plot(x_ax, L.train.e, 'b', ...
+        p = semilogy(x_ax, L.train.e, 'b', ...
                  x_ax, L.val.e, 'r');
         legend(p, {'Training', 'Validation'},'Location','NorthEast');
     else
-        p = plot(x_ax,L.train.e,'b');
+        p = semilogy(x_ax,L.train.e,'b');
         legend(p, {'Training'},'Location','NorthEast');
     end    
     xlabel('Number of epochs'); ylabel('Error');title('Error');    
