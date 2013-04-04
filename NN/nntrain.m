@@ -128,7 +128,7 @@ for i = 1 : numepochs
             ' Learningrate: ' num2str(nn.learningRate) ' Momentum: ' num2str(nn.momentum)]);
         
     %save model after very 100 epochs
-    if save_nn_flag && mod(i,10) == 0
+    if save_nn_flag && mod(i,100) == 0
             epoch_nr = i;
             hloss = cpLossToHost(dloss,opts);
             save([opts.outputfolder '_epochnr' num2str(epoch_nr) '.mat'],'hnn','opts','epoch_nr','hloss');
