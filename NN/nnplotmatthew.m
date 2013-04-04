@@ -2,6 +2,9 @@ function nnplotmatthew(nn,fhandle,L,opts,i)
 %NNPLOTMATTHEW Used with matthew correlation coefficient. 
 % Plots all coefficients and training error. Used with opts.errfun set to
 % @matthew.
+
+%
+%  TODO check indexing of plots - PROBABLY A BUG
     nplots = size(L.train.e_errfun,2) + 1;
     n_cols = 4.0;
     n_rows = ceil(nplots / n_cols);
