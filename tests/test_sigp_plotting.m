@@ -54,6 +54,23 @@ opts.plotfun                = @nnplotsigp;  % sets the plotting function
 % load a trained network  - Same settings as above
 
 tt = tic;
+
+opts.plotfun = @nnplottest;
+nn.errfun    = @nntest;
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+if gpu == 1
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
+end
+
+[~,L,loss] = nntrain(nn, train_x, train_y, opts);  % cpu
+if gpu == 1
+[~,L,loss] = nntrain(nn, train_x, train_y, opts);
+end
+
+
+
+
+
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
 if gpu == 1
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
