@@ -49,7 +49,7 @@ for target_class = 1:n_output    % testing: set to four
     true_class = ~(expected == target_class);
     
     [TP,TN,FP,FN ] =  calcconfusion(pred_class,true_class);
-    confusionmat(:,:,target_class) = [TP; FP; FN; TN];
+    confusionmat(:,:,target_class) = [TP FP; FN TN];
     
     
 end
@@ -72,6 +72,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
     end
 
     function prec = precision(confusion)
+        %calculate precision
         tp   = confusion(1,1);
         fp   = confusion(1,2);
         %fn   = conconfusion(2,1);
@@ -80,7 +81,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
     end
 
     function spec = specificity(confusion)
-        %tp   = conconfusion(1,1);
+        % calculates specifity
         fp   = confusion(1,2);
         %fn   = conconfusion(2,1);
         tn   = confusion(2,2);
@@ -89,6 +90,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         
     end
     function mcc =  matthew(confusion)
+        % claculates matthew correlation
         tp = confusion(1,1);
         fp = confusion(1,2);
         fn = confusion(2,1);
@@ -96,7 +98,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         
         
         %check if mcc denominator is belew zero, set to 1 if so
-        mcc_denom = (tp+fp) * (tp+fnFN) * (tn+fp) * (tn + fn);
+        mcc_denom = (tp+fp) * (tp+fn) * (tn+fp) * (tn + fn);
         if mcc_denom == 0
             mcc_denom = 1;
         end
@@ -104,7 +106,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         mcc = (tp * tn - fp * fn) ./ sqrt(mcc_denom);
         
         % set mcc to zero if any entries in the conf mat is below 5
-        if any(conconfusion < 5) || sum(conconfusion) < 20
+        if any(confusion(:) < 5) || sum(confusion) < 20
             mcc = 0;   %MCC is ill defined for small numbers ???
         end
     end
