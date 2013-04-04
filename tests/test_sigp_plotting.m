@@ -50,7 +50,7 @@ opts.plot                   = 1;
 opts.batchsize              = 1000;         %  Take a mean gradient step over this many samples
 opts.ntrainforeval          = 5000;         % only GPU:  number of training samples that are copied to the gpu and used to
 opts.plotfun                = @nnplotsigp;  % sets the plotting function
-opts.outputfolder           = 'nns/hinton';
+opts.outputfolder           = 'testout/testplots';
 % load a trained network  - Same settings as above
 
 tt = tic;
