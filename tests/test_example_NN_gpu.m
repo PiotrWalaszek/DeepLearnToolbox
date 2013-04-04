@@ -32,7 +32,7 @@ nn.errfun    = @nntest;
 
 opts.plotfun = @nnplottest;
 opts.numepochs              =  5000;   %  Number of full sweeps through data
-opts.momentum_variable      = [linspace(0.5,0.99,1500 ) linspace(0.99,0.99,opts.numepochs -1500)];
+opts.momentum_variable      = [linspace(0.5,0.95,1500 ) linspace(0.95,0.95,opts.numepochs -1500)];
 opts.learningRate_variable  =  8.*(linspace(0.998,0.998,opts.numepochs ).^linspace(1,opts.numepochs,opts.numepochs ));
 opts.learningRate_variable  = opts.learningRate_variable.*opts.momentum_variable;
 opts.plot                   = 1;
