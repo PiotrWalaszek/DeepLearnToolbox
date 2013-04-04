@@ -126,17 +126,12 @@ for i = 1 : numepochs
             '. Took ' num2str(t1) ' seconds' '. Mean squared error on training set is '...
             num2str(mean(L((n-numbatches):(n-1)))) '. Eval time: ' num2str(t2)]);
         
-    %save model after every ten epochs if it is better than the previous
-    %saved model
+    %save model after very 100 epochs
     if save_nn_flag && mod(i,10) == 0
-       corrfoeff = nnmatthew(nn, val_x, val_y);       
-       
-       if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
-            save([opts.outputfolder '.mat'],'nn','opts','epoch_nr','loss');
+            hloss = cpLossToHost(dloss,opts);
+            save([opts.outputfolder '_epochnr' num2str(epoch_nr) '.mat'],'hnn','opts','epoch_nr','hloss');
             disp(['Saved weights to: ' opts.outputfolder]);
-            corrfoeff_old = corrfoeff(1);
-       end
     end
     
 end
