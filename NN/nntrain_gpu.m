@@ -162,14 +162,10 @@ for i = 1 : numepochs
     %save model after every ten epochs if it is better than the previous
     %saved model
     if save_nn_flag && mod(i,10) == 0
-        corrfoeff = nnmatthew(hnn, hval_x, hval_y); 
-        if corrfoeff(1) > corrfoeff_old
             epoch_nr = i;
             hloss = cpLossToHost(dloss,opts);
-            save([opts.outputfolder '.mat'],'hnn','opts','epoch_nr','hloss');
+            save([opts.outputfolder '_epochnr' num2str(epoch_nr) '.mat'],'hnn','opts','epoch_nr','hloss');
             disp(['Saved weights to: ' opts.outputfolder]);
-            corrfoeff_old = corrfoeff(1);
-        end
     end
 end
 
