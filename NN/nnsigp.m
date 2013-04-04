@@ -78,6 +78,9 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         %fn   = conconfusion(2,1);
         %tn   = conconfusion(2,2);
         prec = tp / (tp + fp);
+        if (tp + fp) ==0
+            prec = 0;
+        end
     end
 
     function spec = specificity(confusion)
@@ -86,6 +89,9 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         %fn   = conconfusion(2,1);
         tn   = confusion(2,2);
         spec = tn / (fp + tn);
+        if (fp+tn) ==0
+            spec = 0;
+        end
         
         
     end
@@ -106,7 +112,7 @@ err(5) = precision(confusionmat(:,:,3));     % 5) transmembrane(3) MCC
         mcc = (tp * tn - fp * fn) ./ sqrt(mcc_denom);
         
         % set mcc to zero if any entries in the conf mat is below 5
-        if any(confusion(:) < 5) || sum(confusion) < 20
+        if any(confusion(:) < 5) || sum(confusion(:)) < 20
             mcc = 0;   %MCC is ill defined for small numbers ???
         end
     end
