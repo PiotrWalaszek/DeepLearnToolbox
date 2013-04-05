@@ -22,8 +22,8 @@ hnn.isGPU = 0; % tell code that variables are not on gpu (this is the HOSTnn)
 
 m = size(htrain_x, 1);
 
-if ~isempty(nn.errfun)   %determine number of returned error values
- nerrfun =  numel(hnn.errfun(nn, htrain_x(1,:), htrain_y(1,:)));
+if ~isempty(hnn.errfun)   %determine number of returned error values
+ nerrfun =  numel(hnn.errfun(hnn, htrain_x(1,:), htrain_y(1,:)));
 end
 
 

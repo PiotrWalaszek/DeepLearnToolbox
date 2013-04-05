@@ -58,7 +58,7 @@ tt = tic;
 opts.plotfun = @nnplottest;
 nn.errfun    = @nntest;
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
-[~,L,loss] = nntrain(nn, train_x, train_y, opts)
+[~,L,loss] = nntrain(nn, train_x, train_y, opts);
 if gpu == 1
 [~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts,test_x,test_y);
 [~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
