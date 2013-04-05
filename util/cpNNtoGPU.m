@@ -29,9 +29,7 @@ for i=1:numel(fld)
                 dnn.dW{j} = gpuArray(cast(hnn.dW{j}));
             end
         case 'e'
-            for j=1:numel(hnn.e)
-                dnn.e{j} = gpuArray(cast(hnn.e{j}));
-            end
+                dnn.e = gpuArray(cast(hnn.e));
         case 'a'
             for j=1:numel(hnn.a)
                 dnn.a{j} = gpuArray(cast(hnn.a{j}));
