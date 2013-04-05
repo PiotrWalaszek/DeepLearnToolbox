@@ -22,7 +22,7 @@ if opts.validation == 1
     %create subplots of correlations
     
     subplot(1,2,2);
-    p = plot(x_ax, L.train.e_errfun(x_ax,1), 'b', ...
+    p = semilogy(x_ax, L.train.e_errfun(x_ax,1), 'b', ...
         x_ax, L.val.e_errfun(x_ax,1),   'm');
     
     
@@ -40,7 +40,7 @@ else  % no validation
     set(gca, 'Xlim',[0,opts.numepochs + 1])
      
     subplot(1,2,2);
-    p = plot(x_ax, L.train.e_errfun(x_ax,1), 'b');
+    p = semilogy(x_ax, L.train.e_errfun(x_ax,1), 'b');
     ylabel('Misclassification'); xlabel('Epoch');
     title('Misclassification rate')
     legend(p, {'Training'},'Location','NorthEast');
