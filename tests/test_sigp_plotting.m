@@ -58,32 +58,30 @@ tt = tic;
 opts.plotfun = @nnplottest;
 nn.errfun    = @nntest;
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+[~,L,loss] = nntrain(nn, train_x, train_y, opts)
 if gpu == 1
-[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 end
 
-[~,L,loss] = nntrain(nn, train_x, train_y, opts);  % cpu
-if gpu == 1
-[~,L,loss] = nntrain(nn, train_x, train_y, opts);
-end
-
-
-
-
-
-[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
-if gpu == 1
-[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
-end
 
 opts.plotfun = @nnplotmatthew;
 nn.errfun    = @nnmatthew;
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+[~,L,loss] = nntrain(nn, train_x, train_y, opts);
 if gpu == 1
-[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain:gpu(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain:gpu(nn, train_x, train_y, opts;
 end
 
-
+opts.plotfun = [];
+nn.errfun    = [];
+[~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
+[~,L,loss] = nntrain(nn, train_x, train_y, opts);
+if gpu == 1
+[~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts,test_x,test_y);
+[~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
+end
 
 %[nn_gpu,L,loss] = nntrain_gpu(nn, train_x, train_y, opts); % GPU
 toc(tt);
