@@ -13,10 +13,15 @@ nn.isGPU = 0; % tell code that variables are not on gpu
 
 m = size(train_x,1);
 assert(m ~= 0)
-loss.train.e               = [];
-loss.train.e_errfun        = [];
-loss.val.e                 = [];
-loss.val.e_errfun          = [];
+if ~isempty(nn.errfun)   %determine number of returned error values
+  nerrfun =  numel(nn.errfun(nn, train_x(1,:), train_y(1,:)));
+end
+
+
+loss.train.e               = zeros(opts.numepochs,1);
+loss.train.e_errfun        = zeros(opts.numepochs,nerrfun);
+loss.val.e                 = zeros(opts.numepochs,1);
+loss.val.e_errfun          = zeros(opts.numepochs,nerrfun);
 corrfoeff_old              = -999999999;
 
 if nargin == 6
@@ -104,9 +109,9 @@ for i = 1 : numepochs
     evalt = tic;
     %after each epoch update losses
     if opts.validation == 1
-        loss = nneval(nn, loss,train_x, train_y, val_x, val_y);
+       loss =  nneval(nn, loss,i,train_x, train_y, val_x, val_y);
     else
-        loss = nneval(nn, loss,train_x, train_y);
+       loss = nneval(nn, loss,i,train_x, train_y);
     end
     
     % plot if figure is available

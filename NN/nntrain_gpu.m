@@ -21,11 +21,16 @@ hnn.isGPU = 0; % tell code that variables are not on gpu (this is the HOSTnn)
 
 
 m = size(htrain_x, 1);
-dloss.train.e               = [];
-dloss.train.e_errfun        = [];
-dloss.val.e                 = [];
-dloss.val.e_errfun          = [];
 
+if ~isempty(nn.errfun)   %determine number of returned error values
+ nerrfun =  numel(hnn.errfun(nn, htrain_x(1,:), htrain_y(1,:)));
+end
+
+
+dloss.train.e               = gpuArray.zeros(opts.numepochs,1);
+dloss.train.e_errfun        = gpuArray.zeros(opts.numepochs,nerrfun);
+dloss.val.e                 = gpuArray.zeros(opts.numepochs,1);
+dloss.val.e_errfun          = gpuArray.zeros(opts.numepochs,nerrfun);
 corrfoeff_old = -999999999;
 
 if nargin == 6
@@ -132,9 +137,9 @@ for i = 1 : numepochs
     
     %after each epoch update losses
     if opts.validation == 1
-        dloss = nneval(dnn, dloss ,dtrain_x, dtrain_y, dval_x, dval_y);
+        dloss = nneval(dnn, dloss,i, dtrain_x, dtrain_y, dval_x, dval_y);
     else
-        dloss = nneval(dnn, dloss ,dtrain_x, dtrain_y);
+        dloss = nneval(dnn, dloss,i, dtrain_x, dtrain_y);
     end
        
     % plot if figure is available
