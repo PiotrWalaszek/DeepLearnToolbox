@@ -15,13 +15,12 @@ m = size(train_x,1);
 assert(m ~= 0)
 if ~isempty(nn.errfun)   %determine number of returned error values
   nerrfun =  numel(nn.errfun(nn, train_x(1,:), train_y(1,:)));
+  loss.val.e_errfun          = zeros(opts.numepochs,nerrfun);
+  loss.train.e_errfun        = zeros(opts.numepochs,nerrfun);
 end
-
-
 loss.train.e               = zeros(opts.numepochs,1);
-loss.train.e_errfun        = zeros(opts.numepochs,nerrfun);
 loss.val.e                 = zeros(opts.numepochs,1);
-loss.val.e_errfun          = zeros(opts.numepochs,nerrfun);
+
 corrfoeff_old              = -999999999;
 
 if nargin == 6

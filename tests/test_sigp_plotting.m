@@ -74,7 +74,7 @@ if gpu == 1
 [~,L,loss] = nntrain_gpu(nn, train_x, train_y, opts);
 end
 
-opts.plotfun = [];
+opts.plotfun = @nnupdatefigures;
 nn.errfun    = [];
 [~,L,loss] = nntrain(nn, train_x, train_y, opts,test_x,test_y);  % cpu
 [~,L,loss] = nntrain(nn, train_x, train_y, opts);

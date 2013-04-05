@@ -24,13 +24,14 @@ m = size(htrain_x, 1);
 
 if ~isempty(hnn.errfun)   %determine number of returned error values
  nerrfun =  numel(hnn.errfun(hnn, htrain_x(1,:), htrain_y(1,:)));
+ dloss.train.e_errfun        = gpuArray.zeros(opts.numepochs,nerrfun);
+ dloss.val.e_errfun          = gpuArray.zeros(opts.numepochs,nerrfun);
 end
 
 
 dloss.train.e               = gpuArray.zeros(opts.numepochs,1);
-dloss.train.e_errfun        = gpuArray.zeros(opts.numepochs,nerrfun);
 dloss.val.e                 = gpuArray.zeros(opts.numepochs,1);
-dloss.val.e_errfun          = gpuArray.zeros(opts.numepochs,nerrfun);
+
 corrfoeff_old = -999999999;
 
 if nargin == 6
