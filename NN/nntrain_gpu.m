@@ -26,6 +26,9 @@ if ~isempty(hnn.errfun)   %determine number of returned error values
  nerrfun =  numel(hnn.errfun(hnn, htrain_x(1,:), htrain_y(1,:)));
  dloss.train.e_errfun        = gpuArray.zeros(opts.numepochs,nerrfun);
  dloss.val.e_errfun          = gpuArray.zeros(opts.numepochs,nerrfun);
+else
+dloss.train.e_errfun        = [];
+ dloss.val.e_errfun         = [];
 end
 
 
