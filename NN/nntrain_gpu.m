@@ -8,6 +8,15 @@ function [hnn, L,hloss]  = nntrain_gpu(hnn, htrain_x, htrain_y, opts, hval_x, hv
 %
 % hVARNAME is a variable on the host
 % dVARNAME is a varibale on the gpu device
+%
+% ####TODO#####
+%
+%  FIX FRAGMENTION OF MEMORY, I.E CLEAR INTERMEDIATE VARIABLES
+%       * SEE http://www.mathworks.se/help/matlab/matlab_prog/strategies-for-efficient-use-of-memory.html
+%       * http://www.mathworks.com/matlabcentral/answers/28500
+%       * A easy fix would be to reset gpu device and reload data every 100
+%       ish epoch.
+%   
 gpu = gpuDevice();
 reset(gpu);
 wait(gpu);
