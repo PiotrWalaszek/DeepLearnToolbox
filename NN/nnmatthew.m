@@ -33,7 +33,10 @@ for target_class = 1:n_output    % testing: set to four
     pred_class = ~(pred     == target_class);
     true_class = ~(expected == target_class);
     confusionmat(:,:,target_class) =  confusion(pred_class,true_class);
-    err(target_class) =  matthew(confusionmat(:,:,target_class));    
+    
+    %##### CASPERS CHANGE -PLEASE CHECK!!!
+    %err(target_class) =  matthew(confusionmat(:,:,target_class));
+    mcc(target_class) = matthew(confusionmat(:,:,target_class));
 end
 mcc(n_output+1) = matthew(sum(confusionmat,3));  % calculte mcc for whole dataset
 

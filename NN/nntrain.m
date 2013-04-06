@@ -25,7 +25,6 @@ end
 loss.train.e               = zeros(opts.numepochs,1);
 loss.val.e                 = zeros(opts.numepochs,1);
 
-corrfoeff_old              = -999999999;
 
 if nargin == 6
     opts.validation = 1;
