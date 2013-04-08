@@ -181,24 +181,9 @@ for i = 1 : numepochs
     if save_nn_flag && mod(i,100) == 0
             epoch_nr = i;
             hloss = cpLossToHost(dloss,opts);
-            hnn = cpNNtoHost(dnn);   % get nn from gpu
+            hnn = cpNNtoHost(dnn);
             save([opts.outputfolder '_epochnr' num2str(epoch_nr) '.mat'],'hnn','opts','epoch_nr','hloss');
             disp(['Saved weights to: ' opts.outputfolder]);
-            
-            %%%%% ADDED   #####
-            reset(gpu);  %reset gpu memory to avoid memory fragmentation
-            
-            %load training and validation onto gpu
-            dtrain_x = gpuArray(cast(htrain_x(sample,:)));
-            dtrain_y = gpuArray(cast(htrain_y(sample,:)));
-        
-            if opts.validation == 1
-                dval_x = gpuArray(hval_x);
-                dval_y = gpuArray(hval_y);
-            end
-            
-            dnn = cpNNtoGPU(hnn,cast);  %COPY NN TO GPU
-           % #######END ADDED          
     end
 end
 
