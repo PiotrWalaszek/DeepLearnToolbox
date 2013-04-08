@@ -19,10 +19,10 @@ pred = nnpredict(nn, x);
 
 if nn.isGPU
     confusionmat = gpuArray.zeros(2,2,n_output);
-    err = gpuArray.zeros(1,5);
+    mcc = gpuArray.zeros(1,5);
 else
     confusionmat = zeros(2,2,n_output);
-    err = zeros(1,5);
+    mcc = zeros(1,5);
 end
 
 for target_class = 1:n_output    % testing: set to four
