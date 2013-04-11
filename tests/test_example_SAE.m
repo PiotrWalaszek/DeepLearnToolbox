@@ -34,7 +34,7 @@ assert(er < 0.16, 'Too big error');
 %% ex2 train a 100-100 hidden unit SDAE and use it to initialize a FFNN
 %  Setup and train a stacked denoising autoencoder (SDAE)
 rng(0);
-sae = saesetup([784 100 100]);
+sae = saesetup([784 100 100 100]);
 sae.ae{1}.activation_function       = 'sigm';
 sae.ae{1}.learningRate              = 1;
 sae.ae{1}.inputZeroMaskedFraction   = 0.5;

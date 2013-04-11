@@ -22,3 +22,13 @@ tests/nns/hinton_epochnr4800.mat
 tests/nns/hinton_epochnr2800_my.mat
 
 tests/nns/hinton_epochnr2700_my.mat
+
+tests/nns/sae.eps
+
+tests/nns/sae.fig
+
+tests/nns/sae.png
+
+tests/sae_mnist_test.m
+
+tests/untitled.fig
