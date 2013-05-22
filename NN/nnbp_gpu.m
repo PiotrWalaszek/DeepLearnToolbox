@@ -19,7 +19,7 @@ for i = fliplr(2:n-1)
         case 'sigm'
             d_act = nn.a{i} .* (1 - nn.a{i});
         case 'ReLU'  % linear rectified units max(0,x)
-            d_act =nn.a{i} .* (nn.a{i}>0);
+            d_act =double(nn.a{i}>0);
         case 'tanh_opt'
              d_act = nn.cast(2.7159 * 2/3) * (gpuArray.ones(1,nn.caststr) - nn.cast(1/(1.7159).^2) * nn.a{i}.^2);
     end
