@@ -18,16 +18,15 @@ function rbm = rbmtrain(rbm, x, opts)
             h = cell(cdn + 1,1);
             h_sample = cell(cdn + 1,1);
             
-            % always (except last step) sample hidden units
+            % always (even last step, just don't use samples) sample hidden units
             % never sample visible units
             v{1} = batch;
-            h{1} = sigm(repmat(rbm.c', batchsize, 1) + v{1} * rbm.W');
-            h_sample{1} = sample(h{1});
+            [h{1}, h_sample{1}] = rbmup(rbm,v{1});
                         
             for k = 2 : cdn + 1
-                v{k} = sigm(repmat(rbm.b', batchsize, 1) + h_sample{k-1} * rbm.W);
-                h{k} = sigm(repmat(rbm.c', batchsize, 1) + v{k} * rbm.W');
-                if (k ~= cdn+1), h_sample{k} = sample(h{k}); end;
+                v{k} = rbmdown(rbm,h_sample{k-1});
+                [h{k}, h_sample{k}] = rbmup(rbm,v{k});
+                
             end;
             
             % use probabilities, not sampled values, for collecting statistics

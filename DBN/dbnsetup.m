@@ -4,10 +4,20 @@ function dbn = dbnsetup(dbn, x, opts)
 
     n = size(x, 2);
     dbn.sizes = [n, dbn.sizes];
+    
+    %defaults
+    if (~isfield(opts,'vis_units') || isempty(opts.vis_units))
+        opts.vis_units = 'sigm';
+    end;
+    if (~isfield(opts,'hid_units') || isempty(opts.hid_units))
+        opts.hid_units = 'sigm';
+    end;
 
     for u = 1 : numel(dbn.sizes) - 1
         dbn.rbm{u}.alpha    = opts.alpha;
         dbn.rbm{u}.momentum = opts.momentum;
+        dbn.rbm{u}.vis_units = opts.vis_units;
+        dbn.rbm{u}.hid_units = opts.hid_units;
 
         % weights
         dbn.rbm{u}.W  = normrnd(0, rand_weight_sigma, dbn.sizes(u + 1), dbn.sizes(u));
