@@ -1,17 +1,17 @@
 function nnplotnntest(nn,fhandle,L,opts,i)
 %NNUPDATEFIGURES updates figures during training
-% plots the missclassification rate, to be sued with nntest as error function    
+% plots the missclassification rate, to be used with nntest as error function    
 
     %    plotting
     figure(fhandle); 
     subplot(1,2,1)
     x_ax = 1:i;
     if opts.validation == 1 
-        p = plot(x_ax, L.train.e, 'b', ...
-                 x_ax, L.val.e, 'r');
+        p = plot(x_ax, L.train.e(x_ax), 'b', ...
+                 x_ax, L.val.e(x_ax), 'r');
         legend(p, {'Training', 'Validation'},'Location','NorthEast');
     else
-        p = plot(x_ax,L.train.e,'b');
+        p = plot(x_ax,L.train.e(x_ax),'b');
         legend(p, {'Training'},'Location','NorthEast');
     end    
     xlabel('Number of epochs'); ylabel('Error');title('Error');    
@@ -28,11 +28,11 @@ function nnplotnntest(nn,fhandle,L,opts,i)
     
     subplot(1,2,2)
     if opts.validation == 1 
-        p = plot(x_ax, L.train.e_errfun, 'b', ...
-                 x_ax, L.val.e_errfun, 'r');
+        p = plot(x_ax, L.train.e_errfun(x_ax,:), 'b', ...
+                 x_ax, L.val.e_errfun(x_ax,:), 'r');
         legend(p, {'Training', 'Validation'},'Location','NorthEast');
     else
-        p = plot(x_ax,L.train.e_errfun,'b');
+        p = plot(x_ax,L.train.e_errfun(x_ax,:),'b');
         legend(p, {'Training'},'Location','NorthEast');
     end    
     xlabel('Number of epochs'); ylabel('Misclassification %');title('Misclassification rate');    
