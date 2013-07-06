@@ -22,22 +22,19 @@ If you use this toolbox in your research please cite [Prediction as a candidate 
     title        = "Prediction as a candidate for learning deep hierarchical models of data",
     year         = "2012",
 }
-```
-
-Contact: rasmusbergpalm at gmail dot com
 
 Directories included in the toolbox
 -----------------------------------
 
-`NN/`   - A library for Feedforward Backpropagation Neural Networks
+`NN/`   - A library for Feedforward Backpropagation Neural Networks (with GPU version)
 
-`CNN/`  - A library for Convolutional Neural Networks
+`CNN/`  - A library for Convolutional Neural Networks (CPU only)
 
-`DBN/`  - A library for Deep Belief Networks
+`DBN/`  - A library for Deep Belief Networks (CPU only)
 
-`SAE/`  - A library for Stacked Auto-Encoders
+`SAE/`  - A library for Stacked Auto-Encoders (CPU only)
 
-`CAE/` - A library for Convolutional Auto-Encoders
+`CAE/` - A library for Convolutional Auto-Encoders (CPU only)
 
 `util/` - Utility functions used by the libraries
 
