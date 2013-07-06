@@ -7,7 +7,7 @@ function [x, x_sample] = rbmdown(rbm, x)
         case 'linear'
             % no change, just raw input
             x_sample = x;
-        case 'ReLUnoisy'
+        case 'NReLU'
             x = ReLU(x + normrnd(0,1,size(x)));
             x_sample = x;
         otherwise

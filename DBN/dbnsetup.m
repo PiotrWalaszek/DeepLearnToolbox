@@ -16,7 +16,13 @@ function dbn = dbnsetup(dbn, x, opts)
     for u = 1 : numel(dbn.sizes) - 1
         dbn.rbm{u}.alpha    = opts.alpha;
         dbn.rbm{u}.momentum = opts.momentum;
-        dbn.rbm{u}.vis_units = opts.vis_units;
+        
+        % make vis_units only actually visible units (1st layer)
+        if (u == 1)
+            dbn.rbm{u}.vis_units = opts.vis_units;
+        else
+            dbn.rbm{u}.vis_units = opts.hid_units;
+        end;
         dbn.rbm{u}.hid_units = opts.hid_units;
 
         % weights
