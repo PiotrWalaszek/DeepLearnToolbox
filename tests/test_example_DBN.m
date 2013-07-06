@@ -10,12 +10,13 @@ test_y  = double(test_y);
 %  if default value is given, parameter may not be set in user code
 
 opts.numepochs  = 10;       % number of epochs (full sweeps through data)
-opts.batchsize  = 100;      % number of samples in one mini-batch (set to size(train_x,1) to perform full-batch learning)
+opts.batchsize  = 100;      % number of traning examples to average gradient over (one mini-batch size)
+                            % (set to size(train_x,1) to perform full-batch learning)
 opts.momentum   = 0;        % learning momentum (default: 0)
 opts.alpha      = 1;        % learning rate
 opts.cdn        = 1;        % number of steps for contrastive divergence learning (default: 1)
-opts.vis_units  = 'sigm';   % type of visible units
-opts.hid_units  = 'sigm';   % type of hidden units
+opts.vis_units  = 'sigm';   % type of visible units (default: 'sigm')
+opts.hid_units  = 'sigm';   % type of hidden units  (default: 'sigm')
                             % units can be 'sigm' - sigmoid, 'linear' - linear
                             % 'NReLU' - noisy rectified linear (Gaussian noise)
 

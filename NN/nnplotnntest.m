@@ -1,5 +1,5 @@
 function nnplotnntest(nn,fhandle,L,opts,i)
-%NNUPDATEFIGURES updates figures during training
+%NNPLOTNNTEST updates figures during training
 % plots the missclassification rate, to be used with nntest as error function    
 
     %    plotting

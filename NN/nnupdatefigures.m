@@ -1,5 +1,6 @@
 function nnupdatefigures(nn,fhandle,L,opts,i)
 %NNUPDATEFIGURES updates figures during training
+% Plots error function values
     
 
     %    plotting

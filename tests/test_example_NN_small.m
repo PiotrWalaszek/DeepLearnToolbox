@@ -15,22 +15,67 @@ test_y  = double(test_y);
 [train_x, mu, sigma] = zscore(train_x);
 test_x = normalize(test_x, mu, sigma);
 
+%% NN creation parameters:
+%  default values given, set parameter manually only if you want to change it
+%  set paramters AFTER calling nnsetup()
+
+nn.activation_function              = 'tanh_opt';   %  Activation functions of hidden layers: 
+                                                    % 'sigm' (sigmoid), 'tanh_opt' (optimal tanh), 'ReLU' (rectified linear)
+nn.learningRate                     = 2;            %  learning rate 
+                                                    % Note: typically needs to be lower when using 'sigm'
+                                                    % activation function and non-normalized inputs.
+nn.momentum                         = 0.5;          %  Momentum
+nn.weightPenaltyL2                  = 0;            %  L2 regularization
+nn.weightMaxL2norm                  = 0;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
+nn.nonSparsityPenalty               = 0;            %  Non sparsity penalty
+nn.sparsityTarget                   = 0.05;         %  Sparsity target (used only if SpaisityPenalty ~= 0)
+nn.inputZeroMaskedFraction          = 0;            %  Used for Denoising AutoEncoders
+nn.dropoutFraction                  = 0;            %  Dropout level (http://www.cs.toronto.edu/~hinton/absps/dropout.pdf)
+nn.output                           = 'sigm';       %  output unit 'sigm' (=logistic), 'softmax' and 'linear'
+nn.errfun                           = [];           %  Empty for standard error options: @nnmatthew, @nnmatthew_gpu
+                                                    % @nntest is used for @nnplotnntest
+                                                    % @nnsigp is used for SignalP networks
+
+%% NN training paramters (opts):
+%  default values, may be set by line:
+%  opts = nnopts_setup; 
+
+opts.validation             = 1;    % Is overruled by the number of arguments in nntrain - 
+                                    % ie. nntrain must have 6 input arguments for opts.validation = 1
+opts.plot                   = 0;    % Plots the training progress if set
+opts.plotfun                = @nnupdatefigures; 
+                                    % Plots network error, alternatives:
+                                    % @nnplotmatthew (plots error and matthew coefficients for each class)
+                                    % @nnplotnntest (plots error and misclassification rate)
+                                    % @nnplotsigp (used with SignalP networks)
+opts.outputfolder           = '';   % If set the network is saved to the path specified by outpufolder after every 100 epochs. 
+                                    % If plot is enabled the figure is also saved here after every 10 epochs.
+opts.learningRate_variable  = [];   % If set specifies a momentum for every epoch. 
+                                    % ie length(opts.momentum) == opts.numepochs.
+opts.momentum_variable      = [];   % If set specifies a learning rate for every epoch.
+                                    % ie length(opts.learningRate_variable) == opts.numepochs.
+opts.numepochs              = 1;    % Number of epochs (runs through the complete training data set)
+opts.batchsize              = 100;  % Number of traning examples to average gradient over (one mini-batch size)
+                                    % (set to size(train_x,1) to perform full-batch learning)
+opts.ntrainforeval          = [];   % Only relevant for GPU training. Sets the number of evaluation training datasets to use. 
+                                    % Set this parameter to something small if you run into memory problems
+
 %% ex1 vanilla neural net
 rng(0);
-nn = nnsetup([784 5 10]);
+nn = nnsetup([784 100 10]);
 nn.weightMaxL2norm                  = 15;            %  Max L2 norm of incoming weights to individual Neurons - see Hinton 2009 dropout paper            
-opts = nnopts_setup;
-opts.learningRate_variable = [linspace(10,0.01,100)];
-opts.momentum_variable = [linspace(0.5,0.99,100)];
+opts = nnopts_setup;      % Default training options
+opts.learningRate_variable = [linspace(10,0.01,20)];
+opts.momentum_variable = [linspace(0.5,0.99,20)];
 opts.plot = 1;
-opts.numepochs =  100;   %  Number of full sweeps through data
+opts.numepochs =  20;   %  Number of full sweeps through data
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
 
 [nn,L,loss] = nntrain(nn, train_x, train_y, opts, val_x,val_y);
 
 [er, bad] = nntest(nn, test_x, test_y);
 
-assert(er < 0.08, 'Too big error');
+assert(er < 0.1, 'Too big error');
 
 % Make an artificial one and verify that we can predict it
 x = zeros(1,28,28);
@@ -45,8 +90,10 @@ rng(0);
 nn = nnsetup([784 100 10]);
 
 nn.weightPenaltyL2 = 1e-4;  %  L2 weight decay
+opts = nnopts_setup;
 opts.numepochs =  1;        %  Number of full sweeps through data
 opts.batchsize = 100;       %  Take a mean gradient step over this many samples
+
 
 [nn,L,loss] = nntrain(nn, train_x, train_y, opts);
 
@@ -69,7 +116,7 @@ assert(er < 0.1, 'Too big error');
 
 %% ex4 neural net with sigmoid activation function
 rng(0);
-[nn,L,loss] = nnsetup([784 100 10]);
+nn = nnsetup([784 100 10]);
 
 nn.activation_function = 'sigm';    %  Sigmoid activation function
 nn.learningRate = 1;                %  Sigm require a lower learning rate
@@ -111,7 +158,6 @@ nn.weightPenaltyL2      = 1e-4;
 opts.numepochs          = 30;  
 opts.learningRate_variable = ones(1,opts.numepochs);
 opts.momentum_variable     = 0.5*ones(1,opts.numepochs);
-%nn.dropoutFraction      = 0.5;
 opts.numepochs          = 30;                           %  Number of full sweeps through data
 opts.batchsize          = 1000;                        %  Take a mean gradient step over this many samples
 
@@ -125,5 +171,4 @@ opts.plotfun                = @nnplotmatthew;
 
 
 [er, bad] = nntest(nn, test_x, test_y);
-er
 assert(er < 0.1, 'Too big error');
