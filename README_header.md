@@ -16,13 +16,6 @@ For a more informal introduction, see the following videos by Geoffrey Hinton an
 
 If you use this toolbox in your research please cite [Prediction as a candidate for learning deep hierarchical models of data](http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6284)
 
-```
-@MASTERSTHESIS\{IMM2012-06284,
-    author       = "R. B. Palm",
-    title        = "Prediction as a candidate for learning deep hierarchical models of data",
-    year         = "2012",
-}
-
 Directories included in the toolbox
 -----------------------------------
 
