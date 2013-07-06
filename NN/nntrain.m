@@ -13,14 +13,17 @@ nn.isGPU = 0; % tell code that variables are not on gpu
 
 m = size(train_x,1);
 assert(m ~= 0)
-if ~isempty(nn.errfun)   %determine number of returned error values
-  nerrfun =  numel(nn.errfun(nn, train_x(1,:), train_y(1,:)));
-  loss.val.e_errfun          = zeros(opts.numepochs,nerrfun);
-  loss.train.e_errfun        = zeros(opts.numepochs,nerrfun);
-else
-   loss.val.e_errfun          = [];
-  loss.train.e_errfun        = [];  
-end
+
+% check if error function is supplied, else use nntest
+if isempty(nn.errfun)   
+    nn.errfun = @nntest;
+end;
+    
+% determine number of returned error values
+nerrfun =  numel(nn.errfun(nn, train_x(1,:), train_y(1,:)));
+loss.val.e_errfun          = zeros(opts.numepochs,nerrfun);
+loss.train.e_errfun        = zeros(opts.numepochs,nerrfun);
+
 
 loss.train.e               = zeros(opts.numepochs,1);
 loss.val.e                 = zeros(opts.numepochs,1);
@@ -36,7 +39,7 @@ end
 fhandle = [];
 if isfield(opts,'plot') && opts.plot == 1
     fhandle = figure();
-    %check if plotting function is supplied, else use nnupdatefigures
+    % check if plotting function is supplied, else use nnupdatefigures
     if ~isfield(opts,'plotfun') || isempty(opts.plot)
         opts.plotfun = @nnupdatefigures;
     end
