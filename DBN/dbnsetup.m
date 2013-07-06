@@ -12,10 +12,17 @@ function dbn = dbnsetup(dbn, x, opts)
     if (~isfield(opts,'hid_units') || isempty(opts.hid_units))
         opts.hid_units = 'sigm';
     end;
+    if (~isfield(opts,'momentum') || isempty(opts.momentum))
+        opts.momentum = 0;
+    end;
+    if (~isfield(opts,'cdn') || isempty(opts.momentum))
+        opts.cdn = 1;
+    end;
 
     for u = 1 : numel(dbn.sizes) - 1
         dbn.rbm{u}.alpha    = opts.alpha;
         dbn.rbm{u}.momentum = opts.momentum;
+        dbn.rbm{u}.cdn      = opts.cdn;
         
         % make vis_units only actually visible units (1st layer)
         if (u == 1)

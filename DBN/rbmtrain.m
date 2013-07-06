@@ -1,12 +1,10 @@
 function rbm = rbmtrain(rbm, x, opts)
     assert(isfloat(x), 'x must be a float');
-    if (~isfield(opts,'cdn')), opts.cdn = 1; end;
-    assert(opts.cdn >= 1, 'cdn must be integer >= 1!');
-    
+        
     m = size(x, 1);
     numbatches = floor(m / opts.batchsize);
-    cdn = opts.cdn;
-    
+    cdn = rbm.cdn;
+        
     for i = 1 : opts.numepochs
         kk = randperm(m);
         err = 0;
