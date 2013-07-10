@@ -11,6 +11,6 @@ function [x, x_sample] = rbmdown(rbm, x)
             x = ReLU(x + normrnd(0,sigm(x),size(x)));
             x_sample = x;
         otherwise
-            error('Invalid unit type (rbm.hid_unit)');
+            error('Invalid unit type');
     end;
 end
