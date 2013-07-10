@@ -8,7 +8,7 @@ function [x, x_sample] = rbmdown(rbm, x)
             % no change, just raw input
             x_sample = x;
         case 'NReLU'
-            x = ReLU(x + normrnd(0,1,size(x)));
+            x = ReLU(x + normrnd(0,sigm(x),size(x)));
             x_sample = x;
         otherwise
             error('Invalid hidden unit type (rbm.hid_unit)');
