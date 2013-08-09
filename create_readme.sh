@@ -14,5 +14,5 @@ cat ./tests/test_example_CNN.m >> README.md
 echo -e "\n\`\`\`\n\n" >> README.md
 
 echo -e "Example: Neural Networks\n---------------------\n\`\`\`matlab\n" >> README.md
-cat ./tests/test_example_NN.m >> README.md
+cat ./tests/test_example_NN_small.m >> README.md
 echo -e "\n\`\`\`\n\n" >> README.md
