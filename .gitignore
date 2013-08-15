@@ -39,4 +39,6 @@ DbnForEeg/example.asv
 
 my_path.txt
 
+*.asv
+
 *~

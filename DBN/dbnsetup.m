@@ -15,8 +15,8 @@ function dbn = dbnsetup(dbn, x, opts)
     if (~isfield(opts,'momentum') || isempty(opts.momentum))
         opts.momentum = 0;
     end;
-    if (~isfield(opts,'momentum_first_rbm') || isempty(opts.momentum_first_rbm))
-        opts.momentum_first_rbm = opts.momentum;
+    if (~isfield(opts,'momentum_final') || isempty(opts.momentum_final))
+        opts.momentum_final = opts.momentum;
     end;
     if (~isfield(opts,'alpha') || isempty(opts.alpha))
         opts.alpha = 0.1;
@@ -30,17 +30,18 @@ function dbn = dbnsetup(dbn, x, opts)
 
     for u = 1 : numel(dbn.sizes) - 1
         dbn.rbm{u}.cdn      = opts.cdn;
+        dbn.rbm{u}.momentum = opts.momentum;
+        dbn.rbm{u}.momentum_final = opts.momentum_final;
         
         % make vis_units only actually visible units (1st layer),
         % set parameterst for first RBM
         if (u == 1)
             dbn.rbm{u}.vis_units = opts.vis_units;
-            dbn.rbm{u}.momentum = opts.momentum_first_rbm;
             dbn.rbm{u}.alpha    = opts.alpha_first_rbm;
         else
             dbn.rbm{u}.vis_units = opts.hid_units;
             dbn.rbm{u}.alpha    = opts.alpha;
-            dbn.rbm{u}.momentum = opts.momentum;
+            
         end;
         dbn.rbm{u}.hid_units = opts.hid_units;
 

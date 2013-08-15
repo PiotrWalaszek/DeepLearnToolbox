@@ -8,6 +8,11 @@ function rbm = rbmtrain(rbm, x, opts)
     for i = 1 : opts.numepochs
         kk = randperm(m);
         err = 0;
+        
+        if i == 5   % At 5th epoch change initial momentu to final momentum
+            rbm.momentum = rbm.momentum_final;
+        end
+        
         for l = 1 : numbatches
             batch = extractminibatch(kk,l,opts.batchsize,x);
             batchsize = size(batch,1);  % actual batchsize (last batch may be larger then others)
