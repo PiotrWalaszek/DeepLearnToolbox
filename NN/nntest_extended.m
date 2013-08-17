@@ -31,6 +31,6 @@ function [info_output] = nntest_extended(nn, x, y)
     info_output.fp = fp;
     info_output.fn = fn;
     info_output.bad = find(predicted_labels ~= actual_labels);    
-    info_output.accuracy = numel(info_output.bad) / size(y, 1);
+    info_output.error = numel(info_output.bad) / size(x, 1);
     info_output.mcc = (tp*tn-fp*fn)/sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)); %Matthews correlation coefficient
 end

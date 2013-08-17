@@ -1,6 +1,6 @@
 function example_DBN
 
-load eegP300mini;
+load eegP300;
 
 %% DBN parameters:
 %  if default value is given, parameter may not be set in user code
@@ -18,30 +18,32 @@ opts.hid_units  = 'sigm';       % type of hidden units  (default: 'sigm')
                                 % units can be 'sigm' - sigmoid, 'linear' - linear
                                 % 'NReLU' - noisy rectified linear (Gaussian noise)
 
-dbn.sizes       = [500 500 800];  % size of hidden layers
+dbn.sizes       = [1000 1000 2000];  % size of hidden layers
 
 rng(0);
 
 dbn = dbnsetup(dbn, train_x, opts);
 dbn = dbntrain(dbn, train_x, opts);
 
-save('C:\Users\piow\Documents\DeepLearnToolbox\data\dbn_mini500x500x800.mat','dbn');
+save('C:\Users\piow\Documents\DeepLearnToolbox\saves\dbn.mat','dbn');
 
 %unfold dbn to nn
-nn = dbnunfoldtonn(dbn, [150, 2]);
+nn = dbnunfoldtonn(dbn, [350, 2]);
 nn.activation_function = 'sigm';
 
 %train nn
 opts.numepochs =  100;
-opts.batchsize = 100;
+opts.batchsize = 5;
 opts.learningRate_variable = zeros(1,opts.numepochs) + 0.4;
 opts.momentum_variable = zeros(1,opts.numepochs) + 0.9;
 
 nn = nntrain(nn, train_x, train_y, opts);
 
+save('C:\Users\piow\Documents\DeepLearnToolbox\saves\nn.mat','nn');
+
 error_info = nntest_extended(nn, test_x, test_y);
 fprintf('Matthews correlation coefficient = %f\n',error_info.mcc);
-fprintf('Accurancy = %f\n',error_info.accuracy);
+fprintf('Error = %f\n',error_info.error);
 fprintf('Confusion matrix\nA \tPredicted class\n');
 fprintf('c \t\tNo,\t\tYes\n');
 fprintf('t No\t%d,\t%d\n',error_info.tn,error_info.fp);
