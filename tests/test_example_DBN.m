@@ -23,25 +23,18 @@ opts.hid_units  = 'sigm';   % type of hidden units  (default: 'sigm')
 dbn.sizes       = [10 20];  % size of hidden layers
 
 %%  ex1 train a 100 hidden unit RBM and visualize its weights
-rng('default'),rng(0);
+rand('state',0)
 dbn.sizes = [100];
 opts.numepochs =   1;
 opts.batchsize = 100;
 opts.momentum  =   0;
-opts.alpha     =   1;    
-opts.cdn       =   1;
+opts.alpha     =   1;
 dbn = dbnsetup(dbn, train_x, opts);
 dbn = dbntrain(dbn, train_x, opts);
 figure; visualize(dbn.rbm{1}.W');   %  Visualize the RBM weights
 
-% Use code like this to visualize non-square images:
-% X = dbn.rbm{1}.W';
-% vert_size = 28;
-% hor_size = 28;
-% figure; visualize(X, [min(X(:)) max(X(:))], vert_size, hor_size);
-
 %%  ex2 train a 100-100 hidden unit DBN and use its weights to initialize a NN
-rng(0);
+rand('state',0)
 %train dbn
 dbn.sizes = [100 100];
 opts.numepochs =   1;
