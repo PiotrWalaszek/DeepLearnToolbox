@@ -33,11 +33,13 @@ tests/sae_mnist_test.m
 
 tests/untitled.fig
 
-data/eegP300.mat
+data/
 
 DbnForEeg/example.asv
 
 my_path.txt
+
+saves
 
 *.asv
 
