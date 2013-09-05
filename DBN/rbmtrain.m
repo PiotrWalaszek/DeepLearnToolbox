@@ -4,7 +4,7 @@ function rbm = rbmtrain(rbm, x, opts)
     m = size(x, 1);
     numbatches = floor(m / opts.batchsize);
     cdn = rbm.cdn;
-        
+    T = 1.0;    
     for i = 1 : opts.numepochs
         kk = randperm(m);
         err = 0;
@@ -20,15 +20,16 @@ function rbm = rbmtrain(rbm, x, opts)
             v = cell(cdn + 1,1);
             h = cell(cdn + 1,1);
             h_sample = cell(cdn + 1,1);
+            v_sample = cell(cdn + 1,1);
             
             % always (even last step, just don't use samples) sample hidden units
             % never sample visible units
             v{1} = batch;
-            [h{1}, h_sample{1}] = rbmup(rbm,v{1});
+            [h{1}, h_sample{1}] = rbmup(rbm,v{1},T);
                         
             for k = 2 : cdn + 1
-                v{k} = rbmdown(rbm,h_sample{k-1});
-                [h{k}, h_sample{k}] = rbmup(rbm,v{k});
+                [v{k}, v_sample{k}] = rbmdown(rbm,h_sample{k-1},T);
+                [h{k}, h_sample{k}] = rbmup(rbm,v_sample{k},T);
                 
             end;
             
@@ -46,7 +47,7 @@ function rbm = rbmtrain(rbm, x, opts)
 
             err = err + sum(sum((v{1} - v{cdn + 1}) .^ 2)) / batchsize;
         end
-        
+        T = T*0.98;
         disp(['epoch ' num2str(i) '/' num2str(opts.numepochs)  '. Average reconstruction error is: ' num2str(err / numbatches)]);
         
     end
